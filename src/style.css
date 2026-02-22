@@ -1,0 +1,2349 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========== Component classes (reusable Tailwind patterns from markup) ========== */
+@layer components {
+  /* Section/panel block */
+  .panel {
+    @apply bg-panel rounded border border-border;
+  }
+  .panel-padded {
+    @apply bg-panel p-2.5 rounded border border-border;
+  }
+  .panel-padded-mb3 {
+    @apply bg-panel p-2.5 rounded border border-border mb-3;
+  }
+  .panel-card {
+    @apply bg-panel border border-border rounded-lg p-4;
+  }
+
+  /* Section labels */
+  .label-section {
+    @apply text-text font-semibold text-xs block mb-2;
+  }
+  .label-section--mb0 {
+    @apply mb-0;
+  }
+  .label-section-muted {
+    @apply text-text-muted text-xs font-semibold uppercase;
+  }
+  .label-section-muted--mb0 {
+    @apply mb-0;
+  }
+
+  /* Inputs */
+  .input-base {
+    @apply bg-input border border-border rounded text-text text-sm focus:border-accent outline-none;
+  }
+  .input-full {
+    @apply w-full px-2.5 py-1.5 bg-input border border-border rounded text-text text-sm placeholder:text-text-muted focus:border-accent focus:outline-none;
+  }
+  .input-number-sm {
+    @apply w-12 bg-transparent border border-border text-accent text-center rounded p-0.5 text-xs font-bold font-mono focus:border-accent focus:outline-none;
+  }
+
+  /* Buttons (when not using Button.vue) */
+  .btn-ghost {
+    @apply px-2 py-1 text-xs border border-border text-text-muted rounded hover:text-text transition-colors;
+  }
+  .btn-reset {
+    @apply px-2 py-0.5 text-[10px] border border-text-muted text-text-muted rounded hover:border-text hover:text-text transition-colors;
+  }
+  .btn-primary-sm {
+    @apply px-2 py-1 text-xs bg-accent text-black rounded font-medium;
+  }
+  .btn-danger-ghost {
+    @apply px-2 py-1 text-xs text-danger rounded transition-colors;
+  }
+  .btn-outline {
+    @apply border border-border rounded text-text-muted hover:border-accent hover:text-accent transition-colors;
+  }
+  /* Accent outline: border-accent, fill on hover */
+  .btn-accent-outline-full {
+    @apply w-full px-2 py-1.5 text-xs font-medium border border-accent text-accent rounded hover:bg-accent hover:text-black transition-colors;
+  }
+
+  /* Dividers */
+  .divider {
+    @apply h-px bg-border my-3;
+  }
+
+  /* Form controls */
+  .checkbox-style {
+    @apply rounded border-border text-accent focus:ring-accent;
+  }
+
+  /* Typography */
+  .text-muted-xs {
+    @apply text-text-muted text-[10px];
+  }
+  .text-muted-sm {
+    @apply text-text-muted text-xs;
+  }
+  .text-muted-base {
+    @apply text-text-muted text-sm;
+  }
+  .text-muted-sm-mt1 {
+    @apply text-muted-sm mt-1;
+  }
+  .text-muted-xs-mt1 {
+    @apply text-muted-xs mt-1;
+  }
+  .text-muted-2xs {
+    @apply text-text-muted text-[9px] uppercase tracking-wide opacity-70;
+  }
+  .label-tiny {
+    @apply text-text-muted text-[9px] uppercase;
+  }
+
+  /* Chips / tags */
+  .chip-outline {
+    @apply py-1 px-2 rounded text-[11px] border border-border text-text-muted hover:border-accent hover:text-accent transition-colors;
+  }
+  .chip-outline-dashed {
+    @apply py-1 px-2 rounded text-[11px] border border-dashed border-border text-text-muted hover:border-accent hover:text-accent transition-colors;
+  }
+  .chips-row {
+    @apply flex flex-wrap gap-1;
+  }
+  .chips-row-2 {
+    @apply flex flex-wrap gap-2;
+  }
+  .chips-row-05 {
+    @apply flex flex-wrap gap-0.5;
+  }
+  .flex-gap-1 {
+    @apply flex gap-1;
+  }
+  .min-w-0-flex-1 {
+    @apply min-w-0 flex-1;
+  }
+
+  /* Icon button (small square). Add text-text-muted/70 and hover:bg-* hover:text-* in template. */
+  .icon-size-sm {
+    @apply w-3.5 h-3.5;
+  }
+  .icon-size-md {
+    @apply w-5 h-5;
+  }
+  .icon-size-lg {
+    @apply w-6 h-6;
+  }
+  .icon-btn {
+    @apply shrink-0 w-4 h-4 flex items-center justify-center rounded transition-colors;
+  }
+  .icon-btn-accent {
+    @apply shrink-0 w-4 h-4 flex items-center justify-center rounded transition-colors;
+  }
+  .icon-btn-danger {
+    @apply shrink-0 w-4 h-4 flex items-center justify-center rounded transition-colors;
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4;
+  }
+
+  /* Inline code / key name */
+  .code-inline {
+    @apply px-1 py-0.5 rounded bg-panel text-accent;
+  }
+
+  /* Card container (bg-card, for modals/dropdowns) */
+  .card-box {
+    @apply bg-card border border-border rounded-lg;
+  }
+
+  /* Modal dialog container */
+  .modal-box {
+    @apply relative w-full bg-bg border border-border rounded-xl shadow-2xl overflow-hidden shrink-0;
+  }
+
+  /* Small label (e.g. section subtitle) */
+  .label-small {
+    @apply text-text font-semibold text-xs uppercase tracking-wide;
+  }
+  .label-bold-sm {
+    @apply text-text font-bold text-sm;
+  }
+  .label-semibold-sm {
+    @apply text-text font-semibold text-sm;
+  }
+
+  /* ========== Layout / containers ========== */
+  .container-main {
+    @apply mx-auto max-w-[1400px] px-2 py-3 sm:px-3 sm:py-4;
+  }
+  .navbar-inner {
+    @apply max-w-[1400px] mx-auto px-3;
+  }
+  .loading-wrap {
+    @apply flex items-center justify-center py-12;
+  }
+  .pt-content {
+    @apply pt-10;
+  }
+
+  /* Modal header */
+  .modal-header {
+    @apply flex items-center justify-between px-5 py-4 border-b border-border;
+  }
+
+  /* Empty slot / empty state center */
+  .empty-center {
+    @apply flex-1 flex flex-col items-center justify-center gap-2 py-4 text-center;
+  }
+  .empty-state {
+    @apply text-center py-6;
+  }
+
+  /* ========== Buttons (accent/success outline) ========== */
+  .btn-accent-outline {
+    @apply px-3 py-1.5 text-sm font-medium border border-accent text-accent rounded hover:bg-accent hover:text-black transition-colors;
+  }
+  .btn-accent-outline-sm {
+    @apply px-2 py-0.5 text-[10px] border border-accent text-accent rounded hover:bg-accent hover:text-black transition-colors;
+  }
+  .btn-accent-outline-xs {
+    @apply px-2 py-1 text-[10px] border border-accent text-accent rounded hover:bg-accent hover:text-black transition-colors;
+  }
+  .btn-success-outline {
+    @apply px-2 py-0.5 text-[10px] border border-success text-success rounded transition-colors;
+  }
+  .btn-success-outline-xs {
+    @apply px-2 py-1 text-[10px] border border-success text-success rounded transition-colors;
+  }
+  .btn-success-outline-sm {
+    @apply px-3 py-1.5 text-sm font-medium border border-success text-success rounded hover:bg-success hover:text-black transition-colors;
+  }
+
+  /* ========== Chips (small tag-style) ========== */
+  .chip-sm {
+    @apply px-1.5 py-0.5 rounded text-[10px] border;
+  }
+  .chip-sm-inline {
+    @apply px-1.5 py-0.5 rounded text-[10px] border inline-block;
+  }
+  .chip-released {
+    @apply px-1.5 py-0.5 rounded text-[9px] font-medium shrink-0 text-success;
+  }
+
+  /* ========== Row / list item borders ========== */
+  .row-border {
+    @apply flex justify-between items-center py-3 border-b border-white/10 last:border-0;
+  }
+  .row-border-sm {
+    @apply flex justify-between items-center py-2 border-b border-white/10 last:border-0;
+  }
+
+  /* ========== Bars / footers ========== */
+  .bar-footer {
+    @apply p-3 border-t border-border flex justify-between items-center;
+  }
+  .bar-footer-tight {
+    @apply flex justify-between items-center pt-2 mt-2 border-t border-border;
+  }
+
+  /* ========== Card / script row ========== */
+  .card-header-row {
+    @apply flex justify-between items-center p-2.5 cursor-pointer transition-colors;
+  }
+  .script-row {
+    @apply flex flex-wrap items-center gap-x-4 gap-y-2 p-3 cursor-pointer transition-colors;
+  }
+  .slot-header {
+    @apply p-2.5 border-b border-border flex items-center justify-between flex-wrap gap-1;
+  }
+  .slot-body {
+    @apply min-h-[140px] flex flex-col transition-[filter] duration-200;
+  }
+
+  /* ========== Inline edit input ========== */
+  .input-inline-edit {
+    @apply w-full bg-transparent border-b border-transparent hover:border-accent focus:border-accent text-text font-semibold text-sm mb-1 outline-none transition-colors;
+  }
+
+  /* ========== Small icon button (ghost) ========== */
+  .icon-btn-ghost {
+    @apply p-1 rounded text-text-muted hover:text-accent transition-colors;
+  }
+  .icon-btn-ghost-sm {
+    @apply p-0.5 rounded text-text-muted hover:text-accent transition-colors shrink-0;
+  }
+
+  /* ========== Meta / info row ========== */
+  .meta-row {
+    @apply flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-muted-xs;
+  }
+  .info-row {
+    @apply px-3 pb-1 flex flex-wrap gap-x-4 gap-y-0.5 text-muted-xs;
+  }
+  .info-row-bottom {
+    @apply px-3 pb-3 flex flex-wrap gap-x-4 gap-y-1 text-muted-xs;
+  }
+
+  /* ========== Section title (small muted) ========== */
+  .section-title-sm {
+    @apply text-[9px] uppercase tracking-wide mb-1.5;
+  }
+
+  /* ========== Profile / preset buttons (Generator) ========== */
+  .profile-btn {
+    @apply flex-1 min-w-[80px] py-1.5 px-2 rounded font-semibold text-xs uppercase transition-all border;
+  }
+  .preset-chip {
+    @apply py-1 pl-2 pr-1 rounded text-[11px] font-medium border transition-all truncate max-w-[140px] inline-flex items-center gap-0.5;
+  }
+
+  /* ========== Navbar ========== */
+  .nav-bar {
+    @apply fixed top-0 left-0 right-0 z-40 backdrop-blur-sm border-b border-border transition-transform duration-200;
+  }
+
+  /* ========== Overlays ========== */
+  .overlay-dark {
+    @apply fixed inset-0 flex items-center justify-center z-50 p-4;
+  }
+  .overlay-generating {
+    @apply absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg;
+  }
+  .overlay-skipped {
+    @apply absolute inset-0 z-20 flex items-end justify-center pb-8 pointer-events-none;
+  }
+
+  /* ========== Section layout ========== */
+  .section-row {
+    @apply flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-5 mb-5 border-b border-white/10;
+  }
+
+  /* ========== Link / button ghost text ========== */
+  .link-ghost {
+    @apply px-4 py-2 text-sm text-text-muted hover:text-text transition-colors;
+  }
+
+  /* ========== Chip variants ========== */
+  .chip-source {
+    @apply chip-sm font-medium shrink-0;
+  }
+  .chip-agent-type {
+    @apply text-xs px-2 py-0.5 rounded text-text-muted uppercase;
+  }
+  .chip-agent-type-lg {
+    @apply text-xs px-2 py-1 rounded text-text-muted uppercase;
+  }
+
+  /* ========== Synergy stat cards ========== */
+  .stat-card {
+    @apply bg-panel p-6 rounded-xl border shadow-lg text-center relative overflow-hidden;
+  }
+  .stat-title {
+    @apply text-xs uppercase tracking-wider mb-2 font-semibold;
+  }
+  .section-head {
+    @apply text-sm font-semibold uppercase tracking-wide border-b pb-3 mb-4;
+  }
+  .bonus-row {
+    @apply flex justify-between items-center p-3 rounded border-l-4;
+  }
+  .list-item-hover {
+    @apply block w-full text-left px-2 py-0.5 text-xs rounded transition-colors;
+  }
+
+  /* ========== Theme toggle ========== */
+  .theme-toggle-group {
+    @apply flex items-center rounded border border-border overflow-hidden;
+  }
+  .theme-btn {
+    @apply px-2 py-1 text-[10px] font-medium transition-colors border-l border-border;
+  }
+
+  /* ========== Header / layout row ========== */
+  .header-row {
+    @apply flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4;
+  }
+
+  /* ========== Highlight box (accent border) ========== */
+  .highlight-box {
+    @apply flex justify-between items-start border border-accent p-4 rounded-md;
+  }
+  .highlight-box-sm {
+    @apply flex justify-between items-start p-2.5 rounded-md;
+  }
+
+  /* ========== Danger list row ========== */
+  .danger-row {
+    @apply text-danger py-2 border-b border-white/10 last:border-0;
+  }
+
+  /* ========== Week label (screening) ========== */
+  .week-label {
+    @apply text-xs uppercase tracking-wide block mb-1;
+  }
+
+  /* ========== Stop / danger confirm button ========== */
+  .btn-stop {
+    @apply mt-3 px-3 py-1.5 text-xs font-medium border rounded transition-colors;
+  }
+
+  /* ========== BEM: Board block ========== */
+  .board__layout {
+    @apply grid grid-cols-1 xl:grid-cols-[1fr,1fr] gap-4 xl:gap-6;
+  }
+  .board__scroll {
+    @apply min-w-0 overflow-auto;
+  }
+  .board__list-wrap {
+    @apply min-w-0 space-y-4;
+  }
+  .board__intro {
+    @apply text-muted-base mb-4;
+  }
+  .board__grid {
+    @apply grid gap-3;
+  }
+  .board__btn-add {
+    @apply btn-success-outline shrink-0;
+  }
+  .board__btn-ghost-sm {
+    @apply btn-ghost text-[10px];
+  }
+  .board__meta-block {
+    @apply px-3 pb-1;
+  }
+  .board__meta-block--pb2 {
+    @apply px-3 pb-2;
+  }
+  .board__toolbar {
+    @apply flex flex-wrap items-center justify-between gap-2;
+  }
+  .board__card {
+    @apply panel rounded-lg overflow-hidden transition-shadow duration-300;
+  }
+  .board__card-row {
+    @apply script-row;
+  }
+  .board__input-search {
+    @apply input-base flex-1 min-w-[120px] max-w-[200px] px-2.5 py-1.5 placeholder:text-text-muted;
+  }
+  .board__name-edit {
+    @apply input-inline-edit bg-white/5 border border-accent rounded px-1.5 py-0.5 min-w-[8rem];
+  }
+  .board__meta-line {
+    @apply text-muted-xs;
+  }
+  .board__meta-label {
+    @apply section-title-sm opacity-80 mr-1.5;
+  }
+  .board__meta-date {
+    @apply text-muted-xs shrink-0;
+  }
+  .board__actions-bar {
+    @apply flex flex-wrap gap-2 mt-3 pt-3 border-t border-border;
+  }
+
+  /* ========== BEM: Plan block ========== */
+  .plan__header {
+    @apply flex flex-wrap items-center justify-between gap-3;
+  }
+  .plan__slot {
+    @apply panel rounded-lg overflow-hidden flex flex-col min-h-[140px] transition-colors relative;
+  }
+  .plan__slot-header {
+    @apply slot-header;
+  }
+  .plan__slot-body {
+    @apply slot-body;
+  }
+  .plan__overlay-generating {
+    @apply overlay-generating;
+  }
+  .plan__overlay-skipped {
+    @apply overlay-skipped;
+  }
+  .plan__slot-skipped-text {
+    @apply text-white font-light italic text-sm tracking-wider;
+    animation: plan-slot-skipped-fly 5s ease-out forwards;
+  }
+  .plan__phase-block {
+    @apply panel p-4 rounded-lg flex justify-between items-center shadow border-l-4;
+  }
+  .plan__phase-block--art { @apply border-l-art; }
+  .plan__phase-block--accent { @apply border-l-accent; }
+  .plan__phase-block--danger { @apply border-l-danger; }
+
+  /* ========== BEM: Generator block ========== */
+  .generator__presets-bar {
+    @apply mt-2 pt-2 border-t border-border flex flex-wrap items-center gap-1.5;
+  }
+  .generator__presets-section {
+    @apply mt-2 pt-2 border-t border-border;
+  }
+  .generator__presets-label {
+    @apply text-muted-xs uppercase block mb-1.5;
+  }
+  .generator__history-item {
+    @apply text-xs px-2 py-1 rounded border border-border;
+  }
+  .generator__progress-track {
+    @apply mt-2 h-1.5 bg-panel rounded-full overflow-hidden;
+  }
+  .generator__spinner {
+    @apply w-3 h-3 border-2 border-black/30 border-t-black rounded-full animate-spin;
+  }
+
+  /* ========== BEM: Nav block ========== */
+  .nav__logo {
+    @apply flex items-center gap-1.5 select-none cursor-pointer text-left hover:opacity-80 transition-opacity;
+  }
+  .nav__warning {
+    @apply flex-1 min-w-0 flex items-center justify-center md:justify-start md:pl-2;
+  }
+  .nav__mobile-panel {
+    @apply md:hidden py-4 border-t border-border space-y-3;
+  }
+  .nav__theme-group-mobile {
+    @apply flex rounded border border-border overflow-hidden;
+  }
+  .nav__theme-btn-mobile {
+    @apply flex-1 px-2 py-2 text-xs font-medium transition-colors border-l border-border;
+  }
+  .nav__theme-btn {
+    @apply px-2 py-1 text-[10px] font-medium transition-colors;
+  }
+  .nav__icon-ghost {
+    @apply p-0.5 text-text-muted hover:text-danger transition-colors;
+  }
+  .nav__icon-ghost--lg {
+    @apply p-2 text-text-muted hover:text-danger transition-colors;
+  }
+
+  /* ========== BEM: Modal block ========== */
+  .modal__footer {
+    @apply bar-footer;
+  }
+  .modal__title-lg {
+    @apply text-accent text-lg font-semibold uppercase mb-4;
+  }
+  .modal__subtitle {
+    @apply text-xs uppercase tracking-wide mb-3;
+  }
+
+  /* ========== BEM: Synergy block ========== */
+  .synergy__stat-line {
+    @apply flex justify-between border-b border-white/5 pb-2;
+  }
+  .synergy__stat-value {
+    @apply font-semibold font-mono;
+  }
+  .synergy__section-accent {
+    @apply text-accent text-sm font-semibold uppercase tracking-wide border-b pb-3 mb-4;
+  }
+  .synergy__content-split {
+    @apply p-6 sm:p-8 border-t sm:border-t-0 sm:border-l border-border;
+  }
+  .synergy__decor-line {
+    @apply absolute top-0 left-0 right-0 h-0.5 bg-white/10;
+  }
+
+  /* ========== BEM: Advertisers block ========== */
+  .advertisers__panel-card {
+    @apply panel p-4 rounded-lg transition-colors;
+  }
+  .advertisers__week-card {
+    @apply bg-white/5 border rounded-lg p-4 text-center transition-all hover:-translate-y-0.5;
+  }
+  .advertisers__legend-row {
+    @apply flex items-center gap-4 mb-4 text-xs text-text-muted;
+  }
+  .advertisers__legend-row--tight {
+    @apply mb-3;
+  }
+  .advertisers__dot {
+    @apply w-2 h-2 rounded-full;
+  }
+  .advertisers__dot--success {
+    @apply bg-success;
+  }
+  .advertisers__dot--moderate {
+    @apply bg-moderate;
+  }
+  .advertisers__subtitle {
+    @apply text-xs uppercase tracking-wide font-semibold;
+  }
+  .advertisers__subtitle--alt {
+    @apply advertisers__subtitle mt-5 mb-2;
+  }
+  .advertisers__subtitle--ranked {
+    @apply advertisers__subtitle -mt-2 mb-4;
+  }
+  .advertisers__btn-reset {
+    @apply btn-ghost px-3;
+  }
+  .advertisers__subtitle--best {
+    @apply advertisers__subtitle mb-2;
+  }
+  .advertisers__footer {
+    @apply text-center text-sm pt-4 border-t border-white/10;
+  }
+  .advertisers__footer--tight {
+    @apply pt-3;
+  }
+  .advertisers__phase-wrap {
+    @apply space-y-3 mb-5;
+  }
+
+  /* ========== BEM: Save modal block ========== */
+  .save-modal__tab {
+    @apply px-4 py-2 text-xs font-semibold uppercase transition-colors;
+  }
+  .save-modal__empty-msg {
+    @apply text-muted-base mb-3;
+  }
+  .save-modal__section-title {
+    @apply text-text text-xs font-semibold uppercase mb-2;
+  }
+  .save-modal__section-title--danger {
+    @apply text-danger text-xs font-semibold uppercase mb-2;
+  }
+  .save-modal__tag-inline {
+    @apply px-1.5 py-0.5 bg-border text-text text-[10px] rounded;
+  }
+
+  /* ========== BEM: Script card block ========== */
+  .script-card__wrap {
+    @apply panel rounded overflow-hidden transition-colors;
+  }
+  .script-card__wrap--accent {}
+  .script-card__wrap--muted {}
+  .script-card__expand-body {
+    @apply p-2.5 border-t border-border bg-card;
+    animation: script-card-fadeIn 0.3s ease;
+  }
+  .script-card__mini-value {
+    @apply px-1.5 py-0.5 bg-white/5 rounded text-[10px] text-text;
+  }
+  .script-card__toolbar {
+    @apply flex items-center justify-between mb-1.5;
+  }
+  .script-card__name-row {
+    @apply flex-1 min-w-0 flex items-center gap-2 flex-wrap;
+  }
+  .script-card__name {
+    @apply font-semibold text-text text-sm truncate;
+  }
+  .script-card__name--block {
+    @apply block;
+  }
+
+  /* ========== BEM: Plan (continued) ========== */
+  .plan__grid {
+    @apply grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5;
+  }
+  .plan__slot-name-input {
+    @apply font-semibold text-text text-sm bg-white/5 border border-accent rounded px-1.5 py-0.5 min-w-[6rem] outline-none flex-1 max-w-full;
+  }
+  .plan__slot-content {
+    @apply flex items-baseline gap-2 mb-1 flex-wrap;
+  }
+  .plan__slot-actions {
+    @apply mt-auto flex flex-wrap gap-1 pt-1 border-t border-border;
+  }
+  .plan__spinner-lg {
+    @apply w-8 h-8 border-2 rounded-full animate-spin;
+  }
+  .plan__history-link {
+    @apply text-sm text-text-muted flex items-center gap-2;
+  }
+  .plan__history-link-btn {
+    @apply text-left hover:text-accent transition-colors flex items-center gap-2;
+  }
+  .plan__picker-item {
+    @apply panel p-2.5 rounded hover:border-accent cursor-pointer transition-colors flex flex-wrap items-center justify-between gap-x-2 gap-y-1;
+  }
+  .plan__history-modal-item {
+    @apply panel p-2 rounded flex items-center justify-between gap-2 flex-wrap;
+  }
+
+  /* ========== BEM: Nav (continued) ========== */
+  .nav__logo-text {
+    @apply text-sm font-bold uppercase tracking-wide;
+  }
+  .nav__badge-warning {
+    @apply text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded animate-pulse;
+  }
+  .nav__mobile-trigger {
+    @apply md:hidden p-2 text-text-muted hover:text-text transition-colors;
+  }
+  .nav__status-dot {
+    @apply w-2 h-2 rounded-full bg-success animate-pulse;
+  }
+
+  /* ========== BEM: App header (continued) ========== */
+  .app-header__title {
+    @apply text-2xl sm:text-4xl font-extrabold uppercase tracking-wider;
+  }
+  .app-header__icon-ghost {
+    @apply p-1.5 text-text-muted hover:text-danger transition-colors;
+  }
+
+  /* ========== BEM: Generator (continued) ========== */
+  .generator__target-row {
+    @apply flex justify-between items-center mb-1.5;
+  }
+  .generator__range {
+    @apply w-full h-1;
+  }
+  .generator__input-mb3 {
+    @apply input-full mb-3;
+  }
+  .generator__popup {
+    @apply panel-card bg-card text-center min-w-[200px];
+  }
+
+  /* ========== BEM: Advertisers / Analysis ========== */
+  .advertisers__audience-chip {
+    @apply px-4 py-2.5 rounded-md font-medium border;
+  }
+  .analysis__audience-chip {
+    @apply px-3 py-2 rounded-md font-medium border text-sm;
+  }
+  .analysis__btn-outline {
+    @apply px-3 py-2 rounded-md font-medium border text-sm;
+  }
+  .analysis__value-text {
+    @apply font-bold font-mono text-sm;
+  }
+  .analysis__input-inline {
+    @apply inline-block w-14 text-right bg-transparent text-[10px] py-0 px-0.5 border-b outline-none;
+  }
+  .analysis__edit-trigger {
+    @apply inline-block text-left text-[10px] py-0 px-0 border-b border-transparent cursor-text text-text-muted;
+  }
+  .phase-label {
+    @apply uppercase tracking-wide font-semibold;
+  }
+
+  /* ========== Modal ========== */
+  .modal__overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto min-w-0;
+  }
+  .modal__backdrop {
+    @apply absolute inset-0 backdrop-blur-sm;
+  }
+  .modal__close-btn {
+    @apply p-1 rounded-lg transition-colors;
+  }
+  .modal__title {
+    @apply text-lg font-bold text-text;
+  }
+  .modal-content-scroll {
+    @apply p-4 space-y-4 max-h-[75vh] overflow-y-auto;
+  }
+
+  /* ========== Plan slot actions ========== */
+  .plan__slot-icon-btn {
+    @apply icon-btn-ghost disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .plan__slot-icon-btn--danger {
+    @apply icon-btn-ghost hover:text-danger disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .chip-released-sm {
+    @apply px-1.5 py-0.5 rounded text-[9px] font-medium text-success;
+  }
+
+  /* ========== Script card action ========== */
+  .script-card__action-accent {
+    @apply w-full chip-sm text-accent transition-colors py-1;
+  }
+
+  /* ========== Generator ========== */
+  .generator__input-number {
+    @apply input-base w-14 px-2 py-1 text-center font-mono;
+  }
+  .generator__history-card {
+    @apply panel-card transition-colors;
+  }
+  .btn-load {
+    @apply btn-primary-sm px-3 font-semibold;
+  }
+
+  /* ========== Board ========== */
+  .board__archive-btn {
+    @apply px-2 py-0.5 text-[10px] border rounded shrink-0 transition-colors;
+  }
+  .board__remove-btn {
+    @apply px-2 py-1 text-[10px] border rounded transition-colors;
+  }
+
+  /* ========== Save modal ========== */
+  .save-modal__panel-hover {
+    @apply panel-padded transition-colors;
+  }
+  .save-modal__chip-danger {
+    @apply chip-sm text-danger;
+  }
+  .save-modal__link-muted {
+    @apply text-muted-xs transition-colors;
+  }
+
+  /* ========== Advertisers ========== */
+  .advertisers__scores-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-5;
+  }
+  .advertisers__score-row {
+    @apply flex justify-between items-center mb-3;
+  }
+  .advertisers__input-commercial {
+    @apply input-number-sm w-16 p-1;
+  }
+  .advertisers__input-art {
+    @apply input-number-sm w-16 p-1 text-art;
+  }
+  .advertisers__empty-msg {
+    @apply italic;
+  }
+  .advertisers__holiday-best {
+    @apply highlight-box;
+  }
+  .advertisers__phase-value {
+    @apply text-xl font-bold text-white font-mono;
+  }
+  .advertisers__distribution-grid {
+    @apply grid grid-cols-2 sm:grid-cols-4 gap-4;
+  }
+  .advertisers__week-value {
+    @apply font-bold text-lg font-mono;
+  }
+  .advertisers__results-header {
+    @apply flex justify-between items-start mb-4;
+  }
+  .advertisers__week-label {
+    @apply week-label stat-title;
+  }
+  .advertisers__holiday-alt {
+    @apply highlight-box-sm bg-white/5;
+  }
+  .advertisers__lean-row {
+    @apply mb-4 flex justify-between;
+  }
+  .advertisers__input-owned {
+    @apply input-number-sm w-24 p-2;
+  }
+  .advertisers__score-badge {
+    @apply text-muted-sm bg-border px-2 py-1 rounded;
+  }
+  .advertisers__results-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-6;
+  }
+  .advertisers__holiday-name {
+    @apply font-bold text-white block mb-1;
+  }
+  .advertisers__holiday-name-sm {
+    @apply font-bold text-white block mb-1 text-sm;
+  }
+  .advertisers__agent-name {
+    @apply font-semibold text-white;
+  }
+  .advertisers__owned-row {
+    @apply flex items-center gap-4;
+  }
+  .advertisers__legend-item {
+    @apply flex items-center gap-2;
+  }
+  .advertisers__audiences-wrap {
+    @apply flex flex-wrap gap-3;
+  }
+  .advertisers__intro {
+    @apply text-muted-base mb-5;
+  }
+  .highlight-box--accent {
+    @apply highlight-box p-3 rounded-md border border-accent;
+  }
+  .analysis__week-cell {
+    @apply panel rounded p-2 text-center border;
+  }
+
+  /* ========== Synergy ========== */
+  .synergy__grid-cols {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-0 -m-5 sm:-m-6;
+  }
+  .synergy__bonuses-panel {
+    @apply p-6 sm:p-8 bg-white/[0.02];
+  }
+
+  /* ========== Save secrets ========== */
+  .save-secrets__scroll {
+    @apply p-4 space-y-4 max-h-[70vh] overflow-y-auto;
+  }
+  .save-secrets__section-title {
+    @apply text-accent text-xs font-semibold uppercase mb-2;
+  }
+  .save-secrets__section {
+    @apply panel rounded-lg p-3;
+  }
+  .save-secrets__row {
+    @apply flex justify-between gap-2;
+  }
+  .save-secrets__dl {
+    @apply space-y-1 text-xs;
+  }
+  .save-secrets__label {
+    @apply font-medium text-text;
+  }
+  .save-secrets__empty-msg {
+    @apply text-muted-base py-4;
+  }
+  .save-secrets__para {
+    @apply text-xs text-text;
+  }
+  .save-secrets__value-danger {
+    @apply text-danger font-medium;
+  }
+  .save-secrets__meta {
+    @apply text-text-muted mt-0.5;
+  }
+
+  /* ========== Upload zone ========== */
+  .upload-zone {
+    @apply border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors;
+  }
+
+  /* ========== Debug modal ========== */
+  .debug-modal__body {
+    @apply p-5 space-y-4;
+  }
+  .debug-modal__section {
+    @apply flex flex-col gap-2 pt-2 border-t border-border;
+  }
+  .debug-modal__error {
+    @apply text-danger text-xs;
+  }
+  .debug-modal__stack {
+    @apply flex flex-col gap-2;
+  }
+  .debug-modal__row {
+    @apply flex items-center gap-2;
+  }
+  .debug-modal__label {
+    @apply text-muted-sm font-medium;
+  }
+  .btn-outline-full {
+    @apply btn-outline w-full px-3 py-2 text-sm text-left;
+  }
+  .input-mono-area {
+    @apply input-base w-full px-3 py-2 font-mono resize-y min-h-[80px] placeholder:text-text-muted;
+  }
+  .btn-danger-soft {
+    @apply px-3 py-1.5 text-sm text-danger rounded transition-colors;
+  }
+
+  /* ========== Save secrets (continued) ========== */
+  .save-secrets__chip {
+    @apply px-2 py-0.5 bg-border text-text text-[10px] rounded;
+  }
+  .save-secrets__trial-item {
+    @apply text-xs border-b border-border pb-2 last:border-0 last:pb-0;
+  }
+
+  /* ========== Plan search ========== */
+  .plan__search-input {
+    @apply input-base flex-1 min-w-[120px] max-w-[180px] px-2.5 py-1.5 placeholder:text-text-muted;
+  }
+
+  /* ========== Board ========== */
+  .board__tag-chip {
+    @apply px-1.5 py-0.5 rounded text-[10px] border;
+  }
+
+  /* ========== Nav (continued) ========== */
+  .nav__save-btn {
+    @apply btn-success-outline text-xs flex items-center gap-1.5 py-1;
+  }
+  .nav__status-mobile {
+    @apply px-3 py-2 text-sm border border-success text-success rounded transition-colors flex items-center gap-2;
+  }
+  .nav__mobile-btn {
+    @apply btn-outline w-full px-3 py-2 text-sm text-left;
+  }
+
+  /* ========== App header (continued) ========== */
+  .app-header__save-btn {
+    @apply btn-success-outline-sm rounded-full flex items-center gap-2;
+  }
+  .app-header__btn-round {
+    @apply btn-outline px-3 py-1.5 text-sm rounded-full;
+  }
+
+  /* ========== Script card (continued) ========== */
+  .script-card__meta-row {
+    @apply flex flex-wrap gap-x-4 gap-y-1 text-[10px];
+  }
+
+  /* ========== Our movies ========== */
+  .our-movies__script-link {
+    @apply list-item-hover;
+  }
+  .btn-danger-ghost-sm {
+    @apply btn-danger-ghost px-1.5 py-0.5 text-[10px];
+  }
+
+  /* ========== Quick search ========== */
+  .quick-search__input {
+    @apply input-base w-full px-2.5 py-1.5 text-white text-xs;
+  }
+  .quick-search__dropdown {
+    @apply absolute top-full left-0 right-0 bg-input border border-accent rounded-b z-50 max-h-[150px] overflow-y-auto scrollbar-thin;
+  }
+  .quick-search__item {
+    @apply px-2 py-1.5 cursor-pointer border-b border-border last:border-0 transition-colors text-xs;
+  }
+
+  /* ========== Labels ========== */
+  .label-accent-xs {
+    @apply text-accent text-xs font-semibold uppercase;
+  }
+
+  /* ========== Generator tab ========== */
+  .generator-tab__header {
+    @apply flex justify-between items-center flex-wrap gap-2;
+  }
+  .generator-tab__btn-accent {
+    @apply px-2 py-1 text-[10px] border border-accent text-accent rounded transition-colors;
+  }
+  .generator-tab__btn-muted {
+    @apply px-2 py-1 text-[10px] border border-border text-text-muted rounded transition-colors;
+  }
+  .generator-tab__empty {
+    @apply italic text-xs py-2;
+  }
+  .generator-tab__card-wrap {
+    @apply rounded-lg overflow-hidden border border-transparent transition-shadow duration-300;
+  }
+
+  /* ========== Save modal (continued) ========== */
+  .save-modal__tabs {
+    @apply flex border-b border-border shrink-0;
+  }
+  .save-modal__row {
+    @apply flex justify-between items-center mb-1;
+  }
+  .save-modal__row-start {
+    @apply flex justify-between items-start mb-2;
+  }
+  .save-modal__btn-accent {
+    @apply btn-accent-outline px-3 py-1.5 text-xs;
+  }
+
+  /* ========== Tab navigation ========== */
+  .tab-nav {
+    @apply mb-3 sm:mb-4 space-y-3 flex justify-between;
+  }
+  .tab-nav__main-btn {
+    @apply px-4 py-2 text-sm font-semibold rounded-lg border-2 uppercase tracking-wide transition-all;
+  }
+  .tab-nav__tools-label {
+    @apply text-[10px] uppercase tracking-wider font-medium;
+  }
+  .tab-nav__sub-btn {
+    @apply px-2.5 py-1 text-[11px] font-medium rounded border uppercase tracking-wide transition-all;
+  }
+  .tab-nav__row {
+    @apply flex justify-center gap-1.5 flex-wrap;
+  }
+  .tab-nav__tools-row {
+    @apply flex justify-center items-center gap-2 flex-wrap;
+  }
+
+  /* ========== Card ========== */
+  .card-root {
+    @apply bg-card p-3 sm:p-4 rounded-lg border border-border shadow-md;
+  }
+  .card-header__row {
+    @apply flex justify-between items-center mb-2.5;
+  }
+  .card-header__title {
+    @apply text-xs uppercase font-semibold tracking-wide flex items-center gap-1.5;
+  }
+  .card-header__chevron {
+    @apply transition-transform duration-200 text-[10px];
+  }
+
+  /* ========== Our movies (continued) ========== */
+  .our-movies__movie-row {
+    @apply flex flex-wrap items-start justify-between gap-2;
+  }
+  .our-movies__picker {
+    @apply mt-1 p-2 panel max-h-48 overflow-y-auto space-y-2;
+  }
+
+  /* ========== Board (continued) ========== */
+  .board__expanded {
+    @apply border-t border-border p-3;
+  }
+
+  /* ========== Script card (continued) ========== */
+  .script-card__stat-label {
+    @apply text-[9px] uppercase;
+  }
+  .script-card__score {
+    @apply text-sm font-bold font-mono text-accent;
+  }
+  .script-card__score-value {
+    @apply font-bold text-sm font-mono text-accent;
+  }
+  .script-card__footer {
+    @apply px-2 pb-2 pt-1.5 border-t border-border;
+  }
+  .script-card__expand-grid {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-3;
+  }
+  .script-card__sidebar {
+    @apply lg:border-l lg:border-border lg:pl-3;
+  }
+  .script-card__none {
+    @apply text-[10px] italic;
+  }
+  .script-card__btn-advertisers {
+    @apply btn-accent-outline-xs uppercase font-semibold;
+  }
+
+  /* ========== Board (continued) ========== */
+  .board__score {
+    @apply font-mono font-bold text-accent text-xs;
+  }
+  .board__expanded-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-3;
+  }
+  .board__advertiser-sidebar {
+    @apply sm:border-l sm:border-border sm:pl-3;
+  }
+
+  /* ========== Plan (continued) ========== */
+  .plan__page-title {
+    @apply text-lg font-semibold text-text;
+  }
+  .plan__toolbar {
+    @apply flex flex-wrap items-center gap-2;
+  }
+  .plan__slot-score {
+    @apply font-mono text-accent text-xs shrink-0;
+  }
+  .plan__empty-actions {
+    @apply flex flex-wrap justify-center gap-1;
+  }
+  .plan__actions-row {
+    @apply flex flex-wrap items-center gap-3 pt-2;
+  }
+  .plan__filters-row {
+    @apply flex flex-wrap gap-2 items-center mb-3;
+  }
+  .plan__input-sm {
+    @apply input-base px-2 py-1;
+  }
+  .plan__slot-meta {
+    @apply text-muted-xs shrink-0;
+  }
+  .plan__picker-empty {
+    @apply text-muted-base py-4;
+  }
+  .plan__picker-meta {
+    @apply text-muted-xs block mt-0.5;
+  }
+  .plan__picker-score {
+    @apply font-mono text-accent;
+  }
+  .plan__picker-desc {
+    @apply text-muted-base mb-3;
+  }
+  .plan__slot-btn-label {
+    @apply text-[10px] font-medium;
+  }
+  .plan__note {
+    @apply text-muted-base;
+  }
+  .plan__checkbox-label {
+    @apply text-sm text-text;
+  }
+
+  /* ========== Nav (continued) ========== */
+  .nav__inner {
+    @apply flex items-center justify-between h-10;
+  }
+  .nav__btn-outline {
+    @apply btn-outline px-2 py-1 text-xs;
+  }
+  .nav__mobile-desc {
+    @apply text-muted-base mb-4;
+  }
+
+  /* ========== Generator (continued) ========== */
+  .generator__history-header {
+    @apply flex justify-between items-start mb-3;
+  }
+  .generator__history-date {
+    @apply text-text text-sm font-medium;
+  }
+  .generator__input-sm {
+    @apply input-base px-2 py-1;
+  }
+  .generator__label-text {
+    @apply text-sm text-text;
+  }
+
+  /* ========== Analysis modal ========== */
+  .analysis__section-title {
+    @apply label-bold-sm uppercase tracking-wide mb-3;
+  }
+  .analysis__section-title-sm {
+    @apply label-bold-sm uppercase tracking-wide mb-1;
+  }
+  .analysis__empty-msg {
+    @apply italic text-sm;
+  }
+  .analysis__card {
+    @apply rounded-lg p-4;
+  }
+  .analysis__phase-value-sm {
+    @apply text-lg font-bold text-white font-mono;
+  }
+  .analysis__week-label {
+    @apply text-[10px] block;
+  }
+  .analysis__holiday-name {
+    @apply font-bold text-white block mb-1 text-sm;
+  }
+  .analysis__holiday-name-sm {
+    @apply font-medium text-white block mb-0.5 text-sm;
+  }
+  .analysis__caption {
+    @apply text-xs mb-3;
+  }
+  .analysis__lean-row {
+    @apply mb-3 flex justify-between text-sm;
+  }
+  .analysis__agent-name {
+    @apply font-medium text-white text-sm;
+  }
+  .analysis__screenings-desc {
+    @apply text-[10px] mb-2;
+  }
+  .analysis__phase-block {
+    @apply plan__phase-block p-3;
+  }
+  .analysis__phase-block--art { @apply border-l-art; }
+  .analysis__phase-block--accent { @apply border-l-accent; }
+  .analysis__phase-block--danger { @apply border-l-danger; }
+  .analysis__grid-1-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+  }
+  .analysis__grid-4 {
+    @apply grid grid-cols-4 gap-2;
+  }
+  .analysis__body {
+    @apply p-5 space-y-5;
+  }
+  .analysis__section-heading {
+    @apply label-small mt-4 mb-2;
+  }
+  .analysis__phase-stack {
+    @apply space-y-2 mb-4;
+  }
+
+  /* ========== Generator (continued) ========== */
+  .generator__label-section {
+    @apply text-text text-sm shrink-0;
+  }
+  .generator__label-wrap {
+    @apply flex items-center gap-2 cursor-pointer;
+  }
+  .generator__preset-card {
+    @apply panel-card w-full max-w-sm shadow-xl;
+  }
+  .generator__form-actions {
+    @apply flex gap-2 justify-end;
+  }
+  .generator__batch-row {
+    @apply flex items-center gap-3;
+  }
+  .generator__btn-clear {
+    @apply btn-ghost px-3 hover:border-danger hover:text-danger;
+  }
+  .generator__options-row {
+    @apply flex flex-wrap items-center gap-4;
+  }
+  .generator__spinner-wrap {
+    @apply flex items-center justify-center gap-1;
+  }
+
+  /* ========== Script card (continued) ========== */
+  .script-card__pin-chip {
+    @apply chip-sm font-medium transition-colors shrink-0;
+  }
+
+  /* ========== Tag selector (continued) ========== */
+  .tag-selector__input-inline {
+    @apply input-base flex-1 min-w-0 px-1.5 py-1 text-white cursor-pointer text-[11px];
+  }
+  .tag-selector__input-full {
+    @apply input-base w-full px-1.5 py-1 text-white cursor-pointer text-[11px];
+  }
+  .tag-selector__weight-label {
+    @apply text-white font-bold text-[11px] tabular-nums shrink-0 min-w-[2.25rem] text-right;
+  }
+  .tag-selector__category-name {
+    @apply text-muted-xs font-bold uppercase truncate;
+  }
+  .tag-selector__category-badge {
+    @apply text-[9px] px-1 rounded-full;
+  }
+  .tag-selector__slider-input {
+    @apply flex-1 min-w-0 h-1 rounded appearance-none cursor-pointer genre-slider;
+  }
+  .tag-selector__percent-input {
+    @apply w-9 text-center rounded text-[10px] p-0.5 font-bold shrink-0 border;
+  }
+
+  /* ========== Generator (continued) ========== */
+  .generator__hint {
+    @apply text-accent text-[10px] mt-1;
+  }
+  .generator__badge-danger {
+    @apply text-danger text-[10px] mr-1;
+  }
+  .generator__locked-label {
+    @apply text-muted-2xs block mb-1;
+  }
+  .generator__more-label {
+    @apply text-muted-sm self-center;
+  }
+  .generator__sessions-count {
+    @apply text-muted-sm mr-2;
+  }
+  .generator__history-score-value {
+    @apply text-accent font-bold;
+  }
+  .generator__history-score-sep {
+    @apply text-text-muted mx-1;
+  }
+  .generator__history-score-muted {
+    @apply text-text-muted;
+  }
+
+  /* ========== Save modal (continued) ========== */
+  .save-modal__stats-row {
+    @apply grid grid-cols-4 gap-2 mb-3;
+  }
+  .save-modal__row-value {
+    @apply text-text ml-1 font-medium;
+  }
+  .save-modal__row-value--accent {
+    @apply text-accent ml-1 font-medium;
+  }
+  .save-modal__history-filename {
+    @apply text-text text-xs font-medium;
+  }
+  .save-modal__history-date {
+    @apply text-accent text-[10px];
+  }
+  .save-modal__category-row {
+    @apply panel p-2;
+  }
+  .save-modal__footer-divider {
+    @apply pt-2 border-t border-border;
+  }
+  .save-modal__history-stat-cell {
+    @apply rounded p-1;
+  }
+  .save-modal__btn-ghost {
+    @apply btn-ghost px-3 py-1.5;
+  }
+  .save-modal__btn-secrets {
+    @apply mt-2 btn-accent-outline-sm;
+  }
+  .save-modal__btn-load-sm {
+    @apply btn-load text-[10px];
+  }
+
+  /* ========== Nav (continued) ========== */
+  .nav__status-dot {
+    @apply w-1.5 h-1.5 rounded-full bg-success;
+  }
+  .nav__status-dot-pulse {
+    @apply w-2 h-2 rounded-full bg-success animate-pulse;
+  }
+  .nav__theme-btn-mobile-first {
+    @apply flex-1 px-2 py-2 text-xs font-medium transition-colors;
+  }
+  .nav__divider {
+    @apply w-px h-4 bg-border;
+  }
+  .nav__desktop-actions {
+    @apply hidden md:flex items-center gap-2;
+  }
+  .nav__save-group {
+    @apply flex items-center gap-1;
+  }
+  .nav__mobile-content {
+    @apply flex flex-col gap-2;
+  }
+  .nav__mobile-save-row {
+    @apply flex items-center justify-between;
+  }
+  .generator__progress-fill {
+    @apply h-full bg-accent transition-all duration-300;
+  }
+  .generator__generate-wrap {
+    @apply mt-3;
+  }
+  .generator__skipped-badge {
+    @apply text-amber-400;
+  }
+  .generator__profile-row {
+    @apply flex gap-1.5 flex-wrap;
+  }
+  .generator__presets-list {
+    @apply flex flex-wrap gap-1.5;
+  }
+  .generator__truncate {
+    @apply truncate min-w-0;
+  }
+  .generator__grid-2 {
+    @apply grid grid-cols-2 gap-2;
+  }
+  .generator__grid-2-3 {
+    @apply grid grid-cols-2 sm:grid-cols-3 gap-2;
+  }
+  .generator__flex-gap2 {
+    @apply flex gap-2;
+  }
+  .generator__btn-remove {
+    @apply btn-danger-ghost;
+  }
+  .generator__icon-btn-accent {
+    @apply shrink-0 w-4 h-4 flex items-center justify-center rounded transition-colors;
+  }
+  .generator__icon-btn-danger {
+    @apply shrink-0 w-4 h-4 flex items-center justify-center rounded transition-colors;
+  }
+
+  /* ========== Our movies modal ========== */
+  .our-movies__chips {
+    @apply flex flex-wrap gap-1 mt-0.5;
+  }
+  .our-movies__chips--mt1 {
+    @apply flex flex-wrap gap-1 mt-1;
+  }
+  .our-movies__more-label {
+    @apply text-[10px] text-text-muted;
+  }
+  .our-movies__card {
+    @apply panel rounded-lg p-3;
+  }
+  .our-movies__empty-msg {
+    @apply text-muted-base py-4;
+  }
+  .our-movies__movie-name {
+    @apply font-semibold text-text;
+  }
+  .our-movies__released {
+    @apply ml-2 text-success;
+  }
+  .our-movies__script-label {
+    @apply text-[10px] text-success;
+  }
+  .quick-search__item-meta {
+    @apply ml-1.5 opacity-60;
+  }
+
+  /* ========== Debug modal (continued) ========== */
+  .debug-modal__link {
+    @apply text-sm text-accent hover:underline;
+  }
+
+  /* ========== App header (continued) ========== */
+  .app-header__subtitle {
+    @apply text-muted-base uppercase tracking-wide mt-1;
+  }
+  .app-header__actions-row {
+    @apply flex items-center gap-3 flex-wrap;
+  }
+  .app-header__upload-card {
+    @apply card-box p-6 max-w-md w-full;
+  }
+  .app-header__save-group {
+    @apply flex items-center gap-2;
+  }
+  .app-header__upload-actions {
+    @apply flex justify-end mt-6;
+  }
+  .app-header__upload-error {
+    @apply text-danger text-sm mt-3;
+  }
+  .upload-error {
+    @apply text-danger text-sm mt-3;
+  }
+
+  /* ========== Language selector ========== */
+  .lang-selector-wrap {
+    @apply relative inline-block;
+  }
+  .lang-selector__trigger {
+    @apply flex items-center gap-1.5 bg-card text-text border border-border cursor-pointer outline-none transition-colors;
+  }
+  .lang-selector__dropdown {
+    @apply absolute top-full left-0 mt-1 py-1 card-box shadow-xl z-50 min-w-[140px] max-h-[70vh] overflow-y-auto scrollbar-thin;
+  }
+  .lang-selector__option {
+    @apply w-full flex items-center gap-2 px-3 py-2 text-left text-sm transition-colors;
+  }
+  .lang-selector__flag {
+    @apply w-full h-full rounded-sm overflow-hidden border border-border;
+  }
+  .lang-selector__flag-box {
+    @apply shrink-0 w-5 h-3.5 rounded-sm overflow-hidden border border-border;
+  }
+  .lang-selector__flag-box svg {
+    @apply w-full h-full block;
+  }
+
+  /* ========== Plan (continued) ========== */
+  .plan__settings-panel {
+    @apply panel rounded-lg p-3 space-y-3;
+  }
+  .plan__settings-row {
+    @apply flex flex-wrap items-center gap-4;
+  }
+  .plan__slot-inner {
+    @apply p-2.5 flex-1 flex flex-col min-h-0;
+  }
+  .plan__advertiser-hint {
+    @apply text-[9px] mb-1.5;
+  }
+  .plan__modal-scroll {
+    @apply p-4 max-h-[60vh] overflow-y-auto;
+  }
+  .plan__modal-body {
+    @apply p-4;
+  }
+
+  /* ========== Board (continued) ========== */
+  .board__toolbar-row {
+    @apply flex flex-wrap gap-2 items-center;
+  }
+  .board__empty {
+    @apply text-center py-12 text-muted-base;
+  }
+  .board__chip-generator {
+    @apply chip-sm text-accent;
+  }
+  .board__chip-in-plan {
+    @apply chip-source text-success;
+  }
+  .board__chip-released {
+    @apply chip-source text-success border border-success;
+  }
+  .board__tag-chip {
+    @apply chip-sm-inline mr-1 mb-0.5;
+  }
+
+  /* ========== Script card (continued) ========== */
+  .script-card__comp-value {
+    @apply font-bold text-sm font-mono;
+  }
+  .script-card__tag-chip {
+    @apply chip-sm text-[9px];
+  }
+  .script-card__title-wrap {
+    @apply flex-1 min-w-0 mr-2;
+  }
+  .script-card__toolbar-left {
+    @apply flex items-center gap-2;
+  }
+  .script-card__tags-wrap {
+    @apply flex flex-wrap gap-0.5;
+  }
+  .script-card__stat-item {
+    @apply flex items-center gap-1;
+  }
+  .script-card__comp-compact {
+    @apply text-xs font-mono;
+  }
+  .script-card__sidebar-label {
+    @apply label-tiny block mb-1;
+  }
+  .script-card__sidebar-label-sm {
+    @apply label-tiny block mb-0.5;
+  }
+  .script-card__value-inline {
+    @apply ml-1 font-medium;
+  }
+  .script-card__audience-chip {
+    @apply chip-sm font-medium;
+  }
+  .script-card__stats-row {
+    @apply flex items-center gap-3 flex-wrap;
+  }
+
+  /* ========== Our movies (continued) ========== */
+  .our-movies__meta {
+    @apply text-[10px] mt-0.5;
+  }
+  .our-movies__meta-accent {
+    @apply text-[10px] text-accent mt-0.5;
+  }
+  .our-movies__actions-col {
+    @apply shrink-0 flex flex-col items-end gap-1;
+  }
+  .our-movies__hint {
+    @apply text-[10px] mb-1;
+  }
+
+  /* ========== Save modal (continued) ========== */
+  .save-modal__stats-grid {
+    @apply grid grid-cols-2 gap-2 text-xs;
+  }
+  .save-modal__stat-cell {
+    @apply panel p-2 text-center;
+  }
+  .save-modal__stat-value {
+    @apply text-lg font-bold;
+  }
+  .save-modal__stat-value--success { @apply text-success; }
+  .save-modal__stat-value--accent { @apply text-accent; }
+  .save-modal__stat-value--danger { @apply text-danger; }
+  .save-modal__stat-value--muted { @apply text-text-muted; }
+  .save-modal__category-title {
+    @apply text-accent text-xs font-semibold;
+  }
+  .save-modal__history-stats {
+    @apply grid grid-cols-4 gap-1 text-center;
+  }
+  .save-modal__history-stat-value {
+    @apply text-xs;
+  }
+  .save-modal__history-stat-value--success { @apply text-success; }
+  .save-modal__history-stat-value--accent { @apply text-accent; }
+  .save-modal__history-stat-value--danger { @apply text-danger; }
+  .save-modal__history-stat-value--muted { @apply text-muted-sm; }
+
+  /* ========== Tag selector ========== */
+  .tag-selector__grid {
+    @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5;
+  }
+  .tag-selector__category-panel {
+    @apply panel rounded border-l-2 border-l-border transition-colors overflow-hidden;
+  }
+  .tag-selector__category-header {
+    @apply flex justify-between items-center px-2 py-1.5 cursor-pointer select-none;
+  }
+  .tag-selector__content {
+    @apply space-y-1 px-2 pb-2;
+  }
+  .tag-selector__header-left {
+    @apply flex items-center gap-1;
+  }
+  .tag-selector__row {
+    @apply flex gap-1 items-center;
+  }
+  .tag-selector__category-chevron {
+    @apply text-[10px] transition-transform duration-200;
+  }
+  .tag-selector__add-btn {
+    @apply w-4 h-4 flex items-center justify-center border border-border rounded text-[10px] text-accent transition-colors shrink-0;
+  }
+  .tag-selector__remove-btn {
+    @apply text-danger font-bold text-sm hover:scale-110 transition-transform shrink-0;
+  }
+  .tag-selector__slider-row {
+    @apply flex items-center gap-1.5 p-1 rounded border;
+  }
+
+  /* ========== Synergy (continued) ========== */
+  .synergy__stats-grid {
+    @apply grid grid-cols-2 gap-4 sm:gap-5;
+  }
+  .synergy__score-suffix {
+    @apply text-xl font-medium ml-1;
+  }
+  .synergy__stat-card {
+    @apply stat-card border border-white/5;
+  }
+  .synergy__big-score {
+    @apply text-4xl sm:text-5xl font-extrabold;
+  }
+  .synergy__section-head-bordered {
+    @apply section-head border-white/10;
+  }
+  .synergy__bonus-row--accent {
+    @apply bonus-row bg-black/20 border-l-accent;
+  }
+  .synergy__bonus-row--art {
+    @apply bonus-row bg-black/20 border-l-art;
+  }
+  .synergy__btn-ghost {
+    @apply btn-ghost px-3 py-1;
+  }
+  .synergy__stat-row {
+    @apply flex justify-between;
+  }
+  .synergy__empty-conflicts {
+    @apply italic;
+  }
+  .synergy__intro {
+    @apply text-muted-base mb-5;
+  }
+  .synergy__conflicts-intro {
+    @apply modal__subtitle mb-3;
+  }
+  .synergy__score-value {
+    @apply font-bold text-lg font-mono;
+  }
+  .synergy__score-value--accent { @apply text-accent; }
+  .synergy__score-value--art { @apply text-art; }
+  .synergy__footnote {
+    @apply text-xs mt-5 italic;
+  }
+  .synergy__footnote-right {
+    @apply text-xs mt-5 text-right;
+  }
+
+  /* ========== Plan (continued) ========== */
+  .plan__select {
+    @apply input-base px-2.5 pr-8 py-1.5;
+  }
+  .plan__picker-scroll {
+    @apply max-h-[50vh] overflow-y-auto;
+  }
+  .plan__history-score {
+    @apply font-mono text-accent text-xs;
+  }
+
+  /* ========== Board (continued) ========== */
+  .board__filter-select {
+    @apply input-base px-2.5 pr-8 py-1.5;
+  }
+
+  /* ========== Script card (continued) ========== */
+  .script-card__id {
+    @apply text-[9px];
+  }
+
+  /* ========== Board (continued) ========== */
+  .board__tag-more {
+    @apply text-[10px];
+  }
+  .board__filter-btn {
+    @apply btn-outline px-2.5 py-1.5 text-sm;
+  }
+  .board__advertiser-hint {
+    @apply text-[10px] text-text-muted;
+  }
+  .board__btn-accent-xs {
+    @apply btn-accent-outline text-xs font-semibold;
+  }
+  .board__advertiser-btn {
+    @apply mt-1.5 btn-accent-outline-sm;
+  }
+  .board__actions {
+    @apply flex items-center gap-2;
+  }
+  .board__source-chip {
+    @apply chip-sm font-medium shrink-0;
+  }
+  .board__comp {
+    @apply font-mono text-muted-sm;
+  }
+
+  /* ========== Plan (continued) ========== */
+  .plan__slot-buttons {
+    @apply flex items-center gap-1;
+  }
+  .plan__btn-generate {
+    @apply btn-accent-outline disabled:opacity-50;
+  }
+  .plan__btn-toolbar {
+    @apply btn-outline px-3 py-1.5 text-sm font-medium;
+  }
+  .plan__btn-toolbar-sm {
+    @apply btn-outline px-3 py-1.5 text-sm;
+  }
+  .plan__btn-regen {
+    @apply btn-outline px-2 py-0.5 text-[10px] disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .plan__btn-empty {
+    @apply btn-outline px-2 py-1 text-[10px] disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .plan__btn-success-xs {
+    @apply btn-success-outline-xs disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+  .plan__btn-accent-xs {
+    @apply btn-accent-outline-xs disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .plan__btn-stop {
+    @apply btn-stop text-sm;
+  }
+  .plan__tab-link {
+    @apply text-accent hover:underline;
+  }
+  .plan__label {
+    @apply flex items-center gap-2 cursor-pointer;
+  }
+  .plan__generating-text {
+    @apply text-text text-sm font-medium;
+  }
+  .plan__chips-row {
+    @apply flex flex-wrap gap-0.5 mb-1.5;
+  }
+
+  /* ========== Debug modal (continued) ========== */
+  .debug-modal__divider {
+    @apply pt-2 border-t border-border;
+  }
+}
+
+
+/* Success button/chip hover and chip bg (opacity in @apply not supported for custom colors) */
+.btn-success-outline:hover,
+.btn-success-outline-xs:hover {
+  background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+}
+.chip-released {
+  background-color: color-mix(in srgb, var(--color-success) 20%, transparent);
+}
+
+/* Overlays: background with opacity (not in @apply for custom/opacity) */
+.nav-bar {
+  background-color: color-mix(in srgb, var(--color-bg) 95%, transparent);
+}
+.overlay-dark {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+.overlay-generating {
+  background-color: color-mix(in srgb, var(--color-panel) 70%, transparent);
+  backdrop-filter: blur(12px);
+}
+.section-title-sm {
+  color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+}
+.card-header-row:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+.script-row:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+.icon-btn-ghost:hover,
+.icon-btn-ghost-sm:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.advertisers__week-label,
+.stat-title {
+  color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+}
+.modal__subtitle,
+.advertisers__subtitle {
+  color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+}
+.advertisers__footer {
+  color: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+}
+.advertisers__dot--success {
+  box-shadow: 0 0 5px var(--color-success);
+}
+.advertisers__dot--moderate {
+  box-shadow: 0 0 5px var(--color-moderate);
+}
+.synergy__section-accent {
+  border-bottom-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+.script-card__wrap--accent:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+.script-card__wrap--muted:hover {
+  border-color: color-mix(in srgb, var(--color-border) 80%, transparent);
+}
+.plan__spinner-lg {
+  border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-top-color: var(--color-accent);
+}
+
+/* Nav badge warning (amber) - keep in template for theme override if needed */
+.nav__badge-warning {
+  background-color: color-mix(in srgb, #f59e0b 20%, transparent);
+  border-color: color-mix(in srgb, #f59e0b 40%, transparent);
+  color: #fbbf24;
+}
+.analysis__input-inline {
+  border-bottom-color: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+  color: var(--color-text-muted);
+}
+.analysis__input-inline:focus {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-text);
+}
+.analysis__edit-trigger:hover {
+  border-bottom-color: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+}
+.modal__backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+.modal__close-btn {
+  color: var(--color-text-muted);
+}
+.modal__close-btn:hover {
+  color: var(--color-text);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.script-card__action-accent {
+  border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+.script-card__action-accent:hover {
+  background-color: var(--color-accent);
+  color: #000;
+}
+.chip-released-sm {
+  background-color: color-mix(in srgb, var(--color-success) 20%, transparent);
+}
+.save-modal__panel-hover:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+.save-modal__chip-danger {
+  background-color: color-mix(in srgb, var(--color-danger) 10%, transparent);
+  border-color: color-mix(in srgb, var(--color-danger) 30%, transparent);
+}
+.save-modal__link-muted:hover {
+  color: var(--color-danger);
+}
+.advertisers__input-art:focus {
+  border-color: var(--color-art);
+}
+.highlight-box--accent {
+  background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+.generator__history-card:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+.btn-load:hover {
+  background-color: var(--color-accent-hover);
+}
+.upload-zone {
+  border-color: var(--color-border);
+}
+.upload-zone:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+.upload-zone--active {
+  border-color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent) 5%, transparent);
+}
+.btn-danger-soft {
+  background-color: color-mix(in srgb, var(--color-danger) 20%, transparent);
+}
+.btn-danger-soft:hover {
+  background-color: color-mix(in srgb, var(--color-danger) 30%, transparent);
+}
+.nav__status-mobile:hover {
+  background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+}
+.quick-search__item:hover {
+  background-color: var(--color-accent);
+  color: #000;
+}
+.our-movies__script-link:hover {
+  background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  color: var(--color-accent);
+}
+.btn-danger-ghost-sm:hover {
+  background-color: color-mix(in srgb, var(--color-danger) 10%, transparent);
+}
+.generator-tab__btn-accent:hover {
+  background-color: var(--color-accent);
+  color: #000;
+}
+.generator-tab__btn-muted:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.generator-tab__empty {
+  color: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+}
+.tab-nav__tools-label {
+  color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+}
+.board__expanded {
+  background-color: color-mix(in srgb, var(--color-card) 50%, transparent);
+}
+.our-movies__picker {
+  background-color: var(--color-bg);
+}
+.script-card__stat-label {
+  color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+}
+.script-card__none {
+  color: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+}
+.lang-selector__trigger:hover,
+.lang-selector__trigger:focus {
+  border-color: var(--color-accent);
+}
+.lang-selector__option:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.tag-selector__category-panel:hover {
+  border-left-color: var(--color-accent);
+}
+.tag-selector__category-panel--excluded:hover {
+  border-left-color: var(--color-danger);
+}
+.tag-selector__add-btn:hover {
+  background-color: var(--color-accent);
+  color: #000;
+}
+.tag-selector__add-btn--excluded:hover {
+  background-color: var(--color-danger);
+  color: #fff;
+}
+.board__chip-generator {
+  background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+.board__chip-in-plan {
+  background-color: color-mix(in srgb, var(--color-success) 20%, transparent);
+}
+.board__chip-released {
+  background-color: color-mix(in srgb, var(--color-success) 30%, transparent);
+}
+.plan__advertiser-hint {
+  color: var(--color-text-muted);
+}
+.our-movies__meta {
+  color: var(--color-text-muted);
+}
+.our-movies__hint {
+  color: var(--color-text-muted);
+}
+.synergy__score-suffix {
+  color: color-mix(in srgb, var(--color-text-muted) 40%, transparent);
+}
+.upload-zone__hint {
+  color: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+}
+.synergy__footnote {
+  color: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+}
+.synergy__footnote-right {
+  color: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+}
+.synergy__empty-conflicts {
+  color: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+}
+.script-card__id {
+  color: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+}
+.advertisers__empty-msg {
+  color: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+}
+.advertisers__holiday-best {
+  background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+.board__tag-more {
+  color: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+}
+.analysis__empty-msg {
+  color: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+}
+.analysis__week-label {
+  color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+}
+.analysis__card {
+  background-color: #1a1a1a;
+}
+.analysis__caption,
+.analysis__screenings-desc {
+  color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+}
+.generator__history-item {
+  background-color: #1a1a1a;
+}
+.generator__btn-remove:hover {
+  background-color: color-mix(in srgb, var(--color-danger) 10%, transparent);
+}
+.generator__icon-btn-accent {
+  color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+}
+.generator__icon-btn-accent:hover {
+  background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  color: var(--color-accent);
+}
+.generator__icon-btn-danger {
+  color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+}
+.generator__icon-btn-danger:hover {
+  background-color: color-mix(in srgb, var(--color-danger) 20%, transparent);
+  color: var(--color-danger);
+}
+.save-modal__history-stat-cell {
+  background-color: #1a1a1a;
+}
+.advertisers__panel-card--hover:hover {
+  border-color: color-mix(in srgb, var(--color-border) 80%, transparent);
+}
+.tag-selector__percent-input {
+  background-color: color-mix(in srgb, black 30%, transparent);
+  border-color: color-mix(in srgb, white 20%, transparent);
+}
+
+/* Reserve space for scrollbar on desktop only; tablet/mobile often use overlay scrollbar */
+@media (min-width: 1024px) {
+  html {
+    scrollbar-gutter: stable;
+  }
+}
+
+/* Default theme (gold/dark) */
+:root {
+  --color-bg: #121212;
+  --color-card: #1e1e1e;
+  --color-input: #2c2c2c;
+  --color-panel: #252525;
+  --color-border: #333333;
+  --color-accent: #d4af37;
+  --color-accent-hover: #f4cf57;
+  --color-text: #e0e0e0;
+  --color-text-muted: #a0a0a0;
+  --color-danger: #ff5f5f;
+  --color-success: #4cd964;
+  --color-moderate: #ff9f0a;
+  --color-art: #a0a0ff;
+  --range-track: #444;
+  --range-thumb: #d4af37;
+  --range-thumb-border: #252525;
+}
+
+/* Warm theme: refined palette for contrast and readability */
+[data-theme="warm"] {
+  --color-bg: #1a0a08;
+  --color-card: #2d1812;
+  --color-input: #25120d;
+  --color-panel: #3d2319;
+  --color-border: #6b5344;
+  --color-accent: #d4895e;
+  --color-accent-hover: #e8b088;
+  --color-text: #f2dfb8;
+  --color-text-muted: #a89078;
+  --color-danger: #c45c54;
+  --color-success: #7a9e6e;
+  --color-moderate: #d4895e;
+  --color-art: #a89078;
+  --range-track: #5c4033;
+  --range-thumb: #d4895e;
+  --range-thumb-border: #2d1812;
+}
+
+/* Valve theme (SteamGreenTheme): palette from Steam CSS */
+[data-theme="valve"] {
+  --color-bg: rgb(53 58 39);
+  --color-card: rgb(62 69 44);
+  --color-input: rgb(53 58 39);
+  --color-panel: rgb(73 82 53);
+  --color-border: rgb(92 111 45);
+  /* Lighter accent for readable card headers and buttons (bg-accent + text-black) */
+  --color-accent: rgb(165 190 95);
+  --color-accent-hover: rgb(185 205 115);
+  --color-text: rgb(212 224 200);
+  --color-text-muted: rgb(138 154 122);
+  /* Slightly brighter danger for contrast on dark green */
+  --color-danger: rgb(210 100 100);
+  --color-success: #4a7c59;
+  --color-moderate: rgb(135 150 100);
+  --color-art: rgb(138 154 122);
+  --range-track: rgb(62 69 44);
+  --range-thumb: rgb(165 190 95);
+  --range-thumb-border: rgb(53 58 39);
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* When modal is open: lock scroll and compensate for scrollbar on #app only
+   so the modal (teleported to body) stays viewport-centered and doesn't shift */
+body.modal-open {
+  overflow: hidden;
+}
+body.modal-open #app {
+  padding-right: var(--scrollbar-width, 0);
+}
+body.modal-open .app-nav {
+  padding-right: var(--scrollbar-width, 0);
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 20px;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  background: var(--range-track);
+  border-radius: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--range-thumb);
+  border: 3px solid var(--range-thumb-border);
+  margin-top: -6px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 8px rgba(202, 128, 92, 0.4);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 8px;
+  background: var(--range-track);
+  border-radius: 4px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--range-thumb);
+  border: 3px solid var(--range-thumb-border);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type="range"].genre-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  background: var(--track-color, var(--range-track));
+  border-radius: 4px;
+}
+
+input[type="range"].genre-slider::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  background: var(--color-text);
+  border: 3px solid var(--track-color, var(--range-track));
+  margin-top: -7px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+input[type="range"].genre-slider::-moz-range-track {
+  height: 8px;
+  background: var(--track-color, var(--range-track));
+  border-radius: 4px;
+}
+
+input[type="range"].genre-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: var(--color-text);
+  border: 3px solid var(--track-color, var(--range-track));
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23d4af37%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.7-9.2-5.5-12.8z%22/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
+  padding-right: 30px;
+}
+
+[data-theme="warm"] select {
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ca805c%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.7-9.2-5.5-12.8z%22/%3E%3C/svg%3E");
+}
+
+[data-theme="valve"] select {
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a5be5f%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.7-9.2-5.5-12.8z%22/%3E%3C/svg%3E");
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: var(--color-card);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+/* Script card: expand body fade-in */
+@keyframes script-card-fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Plan tab: skipped slot fly-out */
+@keyframes plan-slot-skipped-fly {
+  0% { transform: translateY(0); opacity: 1; filter: blur(0); }
+  100% { transform: translateY(-90px); opacity: 0; filter: blur(6px); }
+}
+
+/* Shared: "just pinned" card animation (Board + Generator) */
+@keyframes cardJustPinned {
+  0% {
+    box-shadow: 0 0 0 0 var(--color-accent);
+    border-color: var(--color-border);
+    transform: scale(1);
+  }
+  15% {
+    box-shadow: 0 0 24px 4px color-mix(in srgb, var(--color-accent) 45%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 80%, transparent);
+    transform: scale(1.012);
+  }
+  40% {
+    box-shadow: 0 0 16px 2px color-mix(in srgb, var(--color-accent) 25%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--color-accent);
+    border-color: var(--color-border);
+    transform: scale(1);
+  }
+}
+
+.card-just-pinned {
+  animation: cardJustPinned 1.8s ease-out forwards;
+}
