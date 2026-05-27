@@ -46,7 +46,7 @@ function hideResults() {
     <input
       v-model="query"
       type="text"
-      placeholder="Search tags..."
+      :placeholder="$t('quickSearch.placeholder')"
       class="quick-search__input"
       @focus="showResults = true"
       @blur="hideResults"

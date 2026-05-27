@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCalculatorStore } from '@/stores/calculator'
 import { useGameDataStore } from '@/stores/gameData'
 import { runGenerationAttempts } from '@/utils/scriptGenerator'
@@ -9,6 +10,7 @@ import { getTagCategoryClasses } from '@/utils/tagCategoryColors'
 import { PencilIcon } from '@heroicons/vue/24/outline'
 import Modal from '@/components/ui/Modal.vue'
 
+const { t } = useI18n()
 const calculator = useCalculatorStore()
 const gameData = useGameDataStore()
 
@@ -28,12 +30,12 @@ function openHistoryModal(entry: ReleasePlanHistoryEntry) {
 }
 function startEditSlotName(slotIndex: number, slot: PlanSlotEntry) {
   editingNameSlotIndex.value = slotIndex
-  editingNameValue.value = slot.name?.trim() || 'Untitled'
+  editingNameValue.value = slot.name?.trim() || t('plan.untitled')
   nextTick(() => document.querySelector<HTMLInputElement>('.plan-slot-name-input')?.focus())
 }
 function stopEditSlotName(slotIndex: number, save: boolean) {
   if (editingNameSlotIndex.value !== slotIndex) return
-  if (save) calculator.updatePlanSlotName(slotIndex, editingNameValue.value.trim() || 'Untitled')
+  if (save) calculator.updatePlanSlotName(slotIndex, editingNameValue.value.trim() || t('plan.untitled'))
   editingNameSlotIndex.value = null
 }
 
@@ -179,7 +181,7 @@ async function generateForSlot(slotIndex: number) {
   if (best && metTarget) {
     const saved: SavedScript = {
       ...best,
-      name: best.name || `Film ${slotIndex + 1}`,
+      name: best.name || t('plan.filmLabel', { n: slotIndex + 1 }),
       pinnedAt: new Date().toISOString(),
       source: 'import'
     }
@@ -289,14 +291,14 @@ function scriptTagHint(script: SavedScript): string {
 }
 
 const slotLabels = computed(() =>
-  calculator.releasePlanSlots.map((_, i) => `Film ${i + 1}`)
+  calculator.releasePlanSlots.map((_, i) => t('plan.filmLabel', { n: i + 1 }))
 )
 </script>
 
 <template>
   <div class="space-y-4">
     <div class="plan__header">
-      <h2 class="plan__page-title">Release Plan</h2>
+      <h2 class="plan__page-title">{{ $t('plan.title') }}</h2>
       <div class="plan__toolbar">
         <button
           type="button"
@@ -304,46 +306,46 @@ const slotLabels = computed(() =>
           :disabled="isGeneratingBatch"
           @click="generateAllSlots"
         >
-          {{ isGeneratingBatch ? 'Generating…' : `Generate all ${calculator.releasePlanSlots.length}` }}
+          {{ isGeneratingBatch ? $t('plan.generating') : $t('plan.generateAll', { n: calculator.releasePlanSlots.length }) }}
         </button>
         <button
           v-if="isGeneratingBatch"
           type="button"
           class="plan__btn-stop"
           :class="confirmStopPlan ? 'border-danger text-danger bg-danger/15 hover:bg-danger/25' : 'border-border text-text-muted hover:border-danger hover:text-danger'"
-          :title="confirmStopPlan ? 'Click again to stop' : 'Stop generation'"
+          :title="confirmStopPlan ? $t('plan.stopTooltipConfirm') : $t('plan.stopTooltip')"
           @click="onStopPlanGenerationClick"
         >
-          {{ confirmStopPlan ? 'Confirm stop?' : 'Stop' }}
+          {{ confirmStopPlan ? $t('plan.stopConfirm') : $t('plan.stop') }}
         </button>
         <button
           type="button"
           class="plan__btn-toolbar"
-          title="Add slot"
+          :title="$t('plan.addSlotTooltip')"
           @click="calculator.addPlanSlot()"
         >
-          + Add slot
+          {{ $t('plan.addSlot') }}
         </button>
         <button
           type="button"
           class="plan__btn-toolbar-sm"
           @click="emit('openTab', 'board')"
         >
-          Open Board →
+          {{ $t('plan.openBoard') }}
         </button>
       </div>
     </div>
 
     <!-- Note: adjust locked/excluded on Board -->
     <p class="plan__note">
-      Locked/excluded tags and targets: adjust on
-      <button type="button" class="plan__tab-link" @click="emit('openTab', 'board')">Board</button>
+      {{ $t('plan.note') }}
+      <button type="button" class="plan__tab-link" @click="emit('openTab', 'board')">{{ $t('plan.boardLink') }}</button>
       →
     </p>
 
     <!-- Settings -->
     <div class="plan__settings-panel">
-      <h3 class="label-section-muted">Uniqueness</h3>
+      <h3 class="label-section-muted">{{ $t('plan.uniqueness') }}</h3>
       <div class="plan__settings-row">
         <label class="plan__label">
           <input
@@ -351,17 +353,17 @@ const slotLabels = computed(() =>
             type="checkbox"
             class="checkbox-style"
           >
-          <span class="plan__checkbox-label">Allow tag repetition across plan</span>
+          <span class="plan__checkbox-label">{{ $t('plan.allowTagRepetition') }}</span>
         </label>
         <template v-if="!calculator.releasePlanSettings.allowTagRepetition">
-          <span class="text-muted-base">Level:</span>
+          <span class="text-muted-base">{{ $t('plan.level') }}</span>
           <select
             v-model="calculator.releasePlanSettings.uniquenessLevel"
             class="plan__input-sm"
           >
-            <option value="low">Low (no extra exclusion)</option>
-            <option value="medium">Medium (avoid tags in 2+ other films)</option>
-            <option value="high">High (no tag repeat)</option>
+            <option value="low">{{ $t('plan.level.low') }}</option>
+            <option value="medium">{{ $t('plan.level.medium') }}</option>
+            <option value="high">{{ $t('plan.level.high') }}</option>
           </select>
         </template>
       </div>
@@ -383,14 +385,14 @@ const slotLabels = computed(() =>
           class="overlay-generating"
         >
           <div class="plan__spinner-lg" />
-          <span class="plan__generating-text">Generating...</span>
+          <span class="plan__generating-text">{{ $t('plan.generatingOverlay') }}</span>
         </div>
         <div
           v-if="skippedSlotIndex === index"
           class="overlay-skipped"
           aria-hidden="true"
         >
-          <span class="plan__slot-skipped-text">skipped.</span>
+          <span class="plan__slot-skipped-text">{{ $t('plan.skipped') }}</span>
         </div>
         <div
           class="slot-body"
@@ -402,17 +404,17 @@ const slotLabels = computed(() =>
             <button
               type="button"
               class="plan__slot-icon-btn"
-              title="From Board"
+              :title="$t('plan.fromBoardTooltip')"
               :disabled="generatingSlotIndex === index"
               @click="openFromBoardPicker(index)"
             >
-              <span class="plan__slot-btn-label">Board</span>
+              <span class="plan__slot-btn-label">{{ $t('plan.fromBoard') }}</span>
             </button>
             <button
               v-if="index > 0"
               type="button"
               class="plan__slot-icon-btn"
-              title="Move earlier"
+              :title="$t('plan.moveEarlierTooltip')"
               :disabled="generatingSlotIndex === index"
               @click="calculator.movePlanSlot(index, index - 1)"
             >
@@ -422,7 +424,7 @@ const slotLabels = computed(() =>
               v-if="index < calculator.releasePlanSlots.length - 1"
               type="button"
               class="plan__slot-icon-btn"
-              title="Move later"
+              :title="$t('plan.moveLaterTooltip')"
               :disabled="generatingSlotIndex === index"
               @click="calculator.movePlanSlot(index, index + 1)"
             >
@@ -432,7 +434,7 @@ const slotLabels = computed(() =>
               v-if="slot"
               type="button"
               class="plan__slot-icon-btn--danger"
-              title="Clear slot"
+              :title="$t('plan.clearSlotTooltip')"
               :disabled="generatingSlotIndex === index"
               @click="calculator.clearPlanSlot(index)"
             >
@@ -442,7 +444,7 @@ const slotLabels = computed(() =>
               v-if="calculator.releasePlanSlots.length > 1"
               type="button"
               class="plan__slot-icon-btn--danger"
-              title="Remove slot"
+              :title="$t('plan.removeSlotTooltip')"
               :disabled="generatingSlotIndex === index"
               @click="calculator.removePlanSlot(index)"
             >
@@ -465,20 +467,20 @@ const slotLabels = computed(() =>
                 >
               </template>
               <template v-else>
-                <span class="script-card__name">{{ slot.name || 'Untitled' }}</span>
+                <span class="script-card__name">{{ slot.name || $t('plan.untitled') }}</span>
                 <button
                   type="button"
                   class="icon-btn-ghost-sm"
-                  title="Rename"
+                  :title="$t('plan.rename')"
                   @click.stop="startEditSlotName(index, slot as PlanSlotEntry)"
                 >
                   <PencilIcon class="icon-size-sm" />
                 </button>
               </template>
-              <span v-if="(slot as PlanSlotEntry).releasedAt" class="chip-released">Released</span>
+              <span v-if="(slot as PlanSlotEntry).releasedAt" class="chip-released">{{ $t('plan.released') }}</span>
               <span class="plan__slot-score">{{ slot.stats.movieScore }}</span>
-              <span class="plan__slot-meta">{{ slot.stats.avgComp.toFixed(1) }} comp</span>
-              <span class="plan__slot-meta">Qual {{ slot.stats.maxScriptQuality }}</span>
+              <span class="plan__slot-meta">{{ $t('plan.comp', { comp: slot.stats.avgComp.toFixed(1) }) }}</span>
+              <span class="plan__slot-meta">{{ $t('plan.quality', { qual: slot.stats.maxScriptQuality }) }}</span>
             </div>
 <div class="plan__chips-row">
             <span
@@ -512,7 +514,7 @@ const slotLabels = computed(() =>
                 :disabled="generatingSlotIndex === index"
                 @click="generateForSlot(index)"
               >
-                Regenerate
+                {{ $t('plan.regenerate') }}
               </button>
               <template v-if="(slot as PlanSlotEntry).releasedAt">
                 <button
@@ -520,7 +522,7 @@ const slotLabels = computed(() =>
                   class="btn-success-outline"
                   @click="calculator.unmarkPlanSlotReleased(index)"
                 >
-                  Unmark released
+                  {{ $t('plan.unmarkReleased') }}
                 </button>
               </template>
               <template v-else>
@@ -529,7 +531,7 @@ const slotLabels = computed(() =>
                   class="btn-success-outline"
                   @click="calculator.markPlanSlotReleased(index)"
                 >
-                  Mark released
+                  {{ $t('plan.markReleased') }}
                 </button>
               </template>
               <button
@@ -537,29 +539,29 @@ const slotLabels = computed(() =>
                 class="btn-accent-outline-sm"
                 @click="openInSynergy(slot)"
               >
-                Synergy
+                {{ $t('plan.synergy') }}
               </button>
               <button
                 type="button"
                 class="btn-accent-outline-sm"
                 @click="openInAdvertisers(slot)"
               >
-                Advertisers
+                {{ $t('plan.advertisers') }}
               </button>
               <button
                 type="button"
                 class="plan__btn-success-xs"
-                :title="isSlotAlreadyOnBoard(slot) ? 'Already on Board' : 'Add to Board (from backlog)'"
+                :title="isSlotAlreadyOnBoard(slot) ? $t('plan.boardTooltipAlready') : $t('plan.boardTooltip')"
                 :disabled="isSlotAlreadyOnBoard(slot)"
                 @click="sendToPreProduction(index, slot)"
               >
-                {{ isSlotAlreadyOnBoard(slot) ? 'On Board' : 'Pre-production' }}
+                {{ isSlotAlreadyOnBoard(slot) ? $t('plan.onBoard') : $t('plan.preProduction') }}
               </button>
             </div>
           </template>
           <template v-else>
             <div class="empty-center">
-              <span class="text-muted-sm">Empty slot</span>
+              <span class="text-muted-sm">{{ $t('plan.emptySlot') }}</span>
               <div class="plan__empty-actions">
                 <button
                   type="button"
@@ -567,7 +569,7 @@ const slotLabels = computed(() =>
                   :disabled="generatingSlotIndex === index"
                   @click="openFromBoardPicker(index)"
                 >
-                  From Board
+                  {{ $t('plan.fromBoardEmpty') }}
                 </button>
                 <button
                   type="button"
@@ -575,7 +577,7 @@ const slotLabels = computed(() =>
                   :disabled="generatingSlotIndex === index"
                   @click="generateForSlot(index)"
                 >
-                  Generate
+                  {{ $t('plan.generateEmpty') }}
                 </button>
               </div>
             </div>
@@ -593,12 +595,12 @@ const slotLabels = computed(() =>
         :disabled="!calculator.releasePlanSlots.some(Boolean)"
         @click="calculator.completePlanAndSaveToHistory()"
       >
-        Complete plan
+        {{ $t('plan.completePlan') }}
       </button>
-      <span class="text-muted-sm">Saves current plan to history and clears the grid.</span>
+      <span class="text-muted-sm">{{ $t('plan.completePlanDesc') }}</span>
     </div>
     <div v-if="calculator.releasePlanHistory.length > 0" class="space-y-2">
-      <h3 class="label-section-muted">Plan history</h3>
+      <h3 class="label-section-muted">{{ $t('plan.history') }}</h3>
       <ul class="space-y-1">
         <li
           v-for="entry in calculator.releasePlanHistory.slice().reverse()"
@@ -611,7 +613,7 @@ const slotLabels = computed(() =>
             @click="openHistoryModal(entry)"
           >
             <span>{{ new Date(entry.completedAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' }) }}</span>
-            <span>— {{ entry.slots.filter(Boolean).length }} films</span>
+            <span>{{ $t('plan.historyEntry', { n: entry.slots.filter(Boolean).length }) }}</span>
           </button>
         </li>
       </ul>
@@ -619,41 +621,41 @@ const slotLabels = computed(() =>
   </div>
 
   <!-- From Board picker modal -->
-  <Modal :open="showFromBoardModal" title="Pick script from Board" @close="showFromBoardModal = false">
+  <Modal :open="showFromBoardModal" :title="$t('plan.picker.title')" @close="showFromBoardModal = false">
     <div class="plan__modal-body">
-      <p class="plan__picker-desc">Choose a script from backlog to put in this plan slot. Scripts already in the plan are hidden.</p>
+      <p class="plan__picker-desc">{{ $t('plan.picker.desc') }}</p>
 
       <!-- Filters (same style as Board tab) -->
       <div class="plan__filters-row">
         <input
           v-model="boardPickerSearch"
           type="text"
-          placeholder="Search by name or tag..."
+          :placeholder="$t('plan.picker.search')"
           class="plan__search-input"
         >
         <select
           v-model="boardPickerStatusFilter"
           class="plan__select"
         >
-          <option value="not_released">Not released</option>
-          <option value="all">All statuses</option>
+          <option value="not_released">{{ $t('plan.picker.notReleased') }}</option>
+          <option value="all">{{ $t('plan.picker.allStatuses') }}</option>
         </select>
         <select
           v-model="boardPickerSourceFilter"
           class="plan__select"
         >
-          <option value="all">All sources</option>
-          <option value="generator">Generator</option>
-          <option value="import">Import</option>
+          <option value="all">{{ $t('plan.picker.allSources') }}</option>
+          <option value="generator">{{ $t('plan.picker.generator') }}</option>
+          <option value="import">{{ $t('plan.picker.import') }}</option>
         </select>
       </div>
 
       <div class="plan__picker-scroll">
         <div v-if="calculator.pinnedScripts.length === 0" class="plan__picker-empty">
-          No scripts in backlog. Add some on the Board first.
+          {{ $t('plan.picker.empty') }}
         </div>
         <div v-else-if="pinnedScriptsForBoardPicker.length === 0" class="plan__picker-empty">
-          No scripts match the filters, or all are already in the plan.
+          {{ $t('plan.picker.emptyFiltered') }}
         </div>
         <ul v-else class="space-y-2">
           <li
@@ -663,11 +665,11 @@ const slotLabels = computed(() =>
             @click="pickFromBoard(script)"
           >
             <div class="min-w-0-flex-1">
-              <span class="script-card__name script-card__name--block">{{ script.name || 'Untitled' }}</span>
+              <span class="script-card__name script-card__name--block">{{ script.name || $t('plan.picker.untitled') }}</span>
               <span class="plan__picker-meta">
                 {{ formatAddedDate(script.pinnedAt) }}
                 <span class="mx-1">·</span>
-                {{ script.source === 'generator' ? 'Generator' : 'Import' }}
+                {{ script.source === 'generator' ? $t('plan.picker.generator') : $t('plan.picker.import') }}
                 <span class="mx-1">·</span>
                 <span class="plan__picker-score">{{ script.stats.movieScore }}</span>
                 <span v-if="scriptTagHint(script)" class="text-text-muted/80"> · {{ scriptTagHint(script) }}</span>
@@ -687,17 +689,17 @@ const slotLabels = computed(() =>
     @close="historyModalEntry = null"
   >
     <div class="plan__modal-scroll">
-      <p class="plan__picker-desc">Films in this plan snapshot.</p>
+      <p class="plan__picker-desc">{{ $t('plan.historyModal.desc') }}</p>
       <ul class="space-y-2">
         <li
           v-for="(slot, i) in (historyModalEntry?.slots ?? []).filter(Boolean)"
           :key="(slot as PlanSlotEntry).uniqueId ?? i"
           class="plan__history-modal-item"
         >
-          <span class="script-card__name">{{ (slot as PlanSlotEntry).name || 'Untitled' }}</span>
+          <span class="script-card__name">{{ (slot as PlanSlotEntry).name || $t('plan.historyModal.untitled') }}</span>
           <span class="plan__history-score">{{ (slot as PlanSlotEntry).stats.movieScore }}</span>
-          <span class="text-muted-xs">{{ (slot as PlanSlotEntry).stats.avgComp.toFixed(1) }} comp</span>
-          <span v-if="(slot as PlanSlotEntry).releasedAt" class="chip-released-sm">Released</span>
+          <span class="text-muted-xs">{{ $t('plan.historyModal.comp', { comp: (slot as PlanSlotEntry).stats.avgComp.toFixed(1) }) }}</span>
+          <span v-if="(slot as PlanSlotEntry).releasedAt" class="chip-released-sm">{{ $t('plan.historyModal.released') }}</span>
         </li>
       </ul>
     </div>

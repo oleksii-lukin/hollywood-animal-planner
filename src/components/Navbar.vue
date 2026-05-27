@@ -126,7 +126,7 @@ function clearSaveData() {
           class="nav__warning"
         >
           <span class="nav__badge-warning">
-            ⚠ Another tab is open — data may conflict
+            {{ $t('navbar.multitabWarning') }}
           </span>
         </div>
 
@@ -139,12 +139,12 @@ function clearSaveData() {
               class="nav__save-btn"
             >
               <span class="nav__status-dot"></span>
-              Save
+              {{ $t('navbar.save') }}
             </button>
             <button
               @click="clearSaveData"
               class="nav__icon-ghost"
-              title="Clear"
+              :title="$t('navbar.clear')"
             >
               <svg class="icon-size-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -156,7 +156,7 @@ function clearSaveData() {
             @click="showUploadModal = true"
             class="nav__btn-outline"
           >
-            Load Save
+            {{ $t('navbar.loadSave') }}
           </button>
           
           <!-- History -->
@@ -176,28 +176,28 @@ function clearSaveData() {
               type="button"
               class="nav__theme-btn"
               :class="themeStore.themeId === 'default' ? 'bg-accent text-black border-accent' : 'text-text-muted hover:text-text border-transparent'"
-              title="Default (gold) theme"
+              :title="$t('navbar.theme.defaultTooltip')"
               @click="themeStore.setTheme('default')"
             >
-              Default
+              {{ $t('navbar.theme.default') }}
             </button>
             <button
               type="button"
               class="theme-btn"
               :class="themeStore.themeId === 'warm' ? 'bg-accent text-black border-accent' : 'text-text-muted hover:text-text border-transparent'"
-              title="Warm (game palette) theme"
+              :title="$t('navbar.theme.warmTooltip')"
               @click="themeStore.setTheme('warm')"
             >
-              Warm
+              {{ $t('navbar.theme.warm') }}
             </button>
             <button
               type="button"
               class="theme-btn"
               :class="themeStore.themeId === 'valve' ? 'bg-accent text-black border-accent' : 'text-text-muted hover:text-text border-transparent'"
-              title="Valve (Steam ~2004 style)"
+              :title="$t('navbar.theme.valveTooltip')"
               @click="themeStore.setTheme('valve')"
             >
-              Valve
+              {{ $t('navbar.theme.valve') }}
             </button>
           </div>
           
@@ -231,13 +231,13 @@ function clearSaveData() {
               class="nav__status-mobile"
             >
               <span class="nav__status-dot-pulse"></span>
-              Save Loaded
+              {{ $t('navbar.mobile.saveLoaded') }}
             </button>
             <button
               @click="clearSaveData"
               class="nav__icon-ghost--lg"
             >
-              Clear
+              {{ $t('navbar.mobile.clear') }}
             </button>
           </div>
           <button
@@ -245,7 +245,7 @@ function clearSaveData() {
             @click="showUploadModal = true; mobileMenuOpen = false"
             class="nav__mobile-btn"
           >
-            Load Save File
+            {{ $t('navbar.mobile.loadSaveFile') }}
           </button>
           
           <!-- History -->
@@ -254,7 +254,7 @@ function clearSaveData() {
             @click="showDataModal = true; mobileMenuOpen = false"
             class="nav__mobile-btn"
           >
-            History ({{ calculator.saveHistory.length }})
+            {{ $t('navbar.mobile.history', { count: calculator.saveHistory.length }) }}
           </button>
           
           <!-- Theme -->
@@ -265,7 +265,7 @@ function clearSaveData() {
               :class="themeStore.themeId === 'default' ? 'bg-accent text-black' : 'text-text-muted hover:text-text'"
               @click="themeStore.setTheme('default')"
             >
-              Default
+              {{ $t('navbar.theme.default') }}
             </button>
             <button
               type="button"
@@ -273,7 +273,7 @@ function clearSaveData() {
               :class="themeStore.themeId === 'warm' ? 'bg-accent text-black' : 'text-text-muted hover:text-text'"
               @click="themeStore.setTheme('warm')"
             >
-              Warm
+              {{ $t('navbar.theme.warm') }}
             </button>
             <button
               type="button"
@@ -281,7 +281,7 @@ function clearSaveData() {
               :class="themeStore.themeId === 'valve' ? 'bg-accent text-black' : 'text-text-muted hover:text-text'"
               @click="themeStore.setTheme('valve')"
             >
-              Valve
+              {{ $t('navbar.theme.valve') }}
             </button>
           </div>
           
@@ -294,11 +294,10 @@ function clearSaveData() {
   </nav>
 
   <!-- Upload Modal -->
-  <Modal :open="showUploadModal" title="Load Save File" @close="showUploadModal = false">
+  <Modal :open="showUploadModal" :title="$t('navbar.uploadModal.title')" @close="showUploadModal = false">
     <div class="p-5">
       <p class="nav__mobile-desc">
-        Upload your Hollywood Animal save file to auto-populate available tags. 
-        The file is processed locally and not uploaded anywhere.
+        {{ $t('navbar.uploadModal.desc') }}
       </p>
       
       <SaveFileUpload @file-selected="handleFileUpload" />

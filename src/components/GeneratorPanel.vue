@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCalculatorStore } from '@/stores/calculator'
 import { useGameDataStore } from '@/stores/gameData'
 import { runGenerationAttempts } from '@/utils/scriptGenerator'
@@ -11,6 +12,7 @@ import Button from '@/components/ui/Button.vue'
 import TagSelector from '@/components/TagSelector.vue'
 import ScriptCard from '@/components/ScriptCard.vue'
 
+const { t } = useI18n()
 const calculator = useCalculatorStore()
 const gameData = useGameDataStore()
 
@@ -56,7 +58,7 @@ function openSavePreset() {
   showSavePreset.value = true
 }
 function submitSavePreset() {
-  const name = savePresetName.value.trim() || 'Unnamed preset'
+  const name = savePresetName.value.trim() || t('generator.defaultPresetName')
   calculator.saveCurrentAsTagPreset(name)
   showSavePreset.value = false
 }
@@ -91,7 +93,7 @@ function onImportFile(e: Event) {
     if (added) {
       calculator.applyTagPreset(added.id)
     } else {
-      alert('Invalid preset file. Expected JSON with name, lockedTags, excludedTags.')
+      alert(t('generator.invalidPresetFile'))
     }
   }
   reader.readAsText(file)
@@ -118,7 +120,7 @@ async function generateScripts() {
   const excludedTags = calculator.generatorExcludedTags
   const scoringFixed = fixedTags.filter((t: TagInput) => t.category !== 'Genre' && t.category !== 'Setting')
   if (scoringFixed.length > targetTagCount.value) {
-    alert(`You have locked ${scoringFixed.length} scoring elements, but the target Movie Score only allows for ~${targetTagCount.value}. Increase the target Movie Score or remove locked elements.`)
+    alert(t('generator.tooManyLockedElements', { n: scoringFixed.length, target: targetTagCount.value }))
     return
   }
   isGenerating.value = true
@@ -183,10 +185,10 @@ function formatHistoryDate(dateStr: string): string {
   const diffMins = Math.floor(diffMs / 60000)
   const diffHours = Math.floor(diffMs / 3600000)
   const diffDays = Math.floor(diffMs / 86400000)
-  if (diffMins < 1) return 'Just now'
-  if (diffMins < 60) return `${diffMins}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays < 7) return `${diffDays}d ago`
+  if (diffMins < 1) return t('generator.justNow')
+  if (diffMins < 60) return t('generator.mAgo', { n: diffMins })
+  if (diffHours < 24) return t('generator.hAgo', { n: diffHours })
+  if (diffDays < 7) return t('generator.dAgo', { n: diffDays })
   return date.toLocaleDateString()
 }
 function loadHistoryEntry(historyId: string) {
@@ -198,17 +200,17 @@ function loadHistoryEntry(historyId: string) {
 <template>
   <div class="space-y-3">
     <Card>
-      <CardHeader title="Generator Settings" collapsible v-model:collapsed="settingsCollapsed" />
+      <CardHeader :title="t('generator.title')" collapsible v-model:collapsed="settingsCollapsed" />
       <!-- Collapsible: presets, generation settings, target compat/score -->
       <div v-show="!settingsCollapsed">
       <div class="panel-padded-mb3">
-        <label class="label-section">Tag presets</label>
+        <label class="label-section">{{ t('generator.tagPresets') }}</label>
         <div class="generator__profile-row">
           <button
             @click="setProfile('starting')"
             class="profile-btn"
             :class="calculator.generatorProfile === 'starting' ? 'bg-text text-black border-text' : 'bg-transparent text-text-muted border-border hover:border-text hover:text-text'"
-          >Starting</button>
+          >{{ t('generator.profile.starting') }}</button>
           <button
             @click="setProfile('save')"
             :disabled="!calculator.hasSaveLoaded"
@@ -216,15 +218,15 @@ function loadHistoryEntry(historyId: string) {
             :class="[
               calculator.generatorProfile === 'save' ? 'bg-success text-black border-success' : calculator.hasSaveLoaded ? 'bg-transparent text-success border-success hover:border-success hover:bg-success/10' : 'bg-transparent text-text-muted/40 border-border cursor-not-allowed'
             ]"
-          >From save</button>
+          >{{ t('generator.profile.fromSave') }}</button>
           <button
             @click="setProfile('custom')"
             class="profile-btn"
             :class="calculator.generatorProfile === 'custom' ? 'bg-text text-black border-text' : 'bg-transparent text-text-muted border-border hover:border-text hover:text-text'"
-          >Custom</button>
+          >{{ t('generator.profile.custom') }}</button>
         </div>
         <div v-if="calculator.tagPresets.length > 0" class="generator__presets-section">
-          <span class="generator__presets-label">Your presets</span>
+          <span class="generator__presets-label">{{ t('generator.yourPresets') }}</span>
           <div class="generator__presets-list">
             <button
               v-for="p in calculator.tagPresets"
@@ -232,17 +234,17 @@ function loadHistoryEntry(historyId: string) {
               @click="loadPreset(p.id)"
               class="preset-chip"
               :class="calculator.activePresetId === p.id ? 'bg-accent/20 text-accent border-accent/50' : 'bg-transparent text-text-muted border-border hover:border-text hover:text-text'"
-              :title="`${p.lockedTags.length} locked, ${p.excludedTags.length} excluded`"
+              :title="t('generator.presetStats', { locked: p.lockedTags.length, excluded: p.excludedTags.length })"
             >
               <span class="generator__truncate">{{ p.name }}</span>
               <span
                 class="generator__icon-btn-accent"
-                title="Export preset"
+                :title="t('generator.exportPreset')"
                 @click.stop="exportPreset(p.id)"
               >↓</span>
               <span
                 class="generator__icon-btn-danger"
-                title="Remove preset"
+                :title="t('generator.removePreset')"
                 @click.stop="calculator.removeTagPreset(p.id)"
               >×</span>
             </button>
@@ -251,15 +253,15 @@ function loadHistoryEntry(historyId: string) {
               class="chip-outline-dashed"
               @click="openSavePreset"
             >
-              + Save current
+              {{ t('generator.saveCurrent') }}
             </button>
             <button
               type="button"
               class="chip-outline"
-              title="Import preset from JSON file"
+              :title="t('generator.importFromJson')"
               @click="triggerImport"
             >
-              Import
+              {{ t('generator.importPreset') }}
             </button>
           </div>
         </div>
@@ -269,16 +271,16 @@ function loadHistoryEntry(historyId: string) {
             class="chip-outline-dashed"
             @click="openSavePreset"
           >
-            + Save current as preset
-          </button>
-          <button
-            type="button"
-            class="chip-outline"
-            title="Import preset from JSON file"
-            @click="triggerImport"
-          >
-            Import preset
-          </button>
+            {{ t('generator.saveCurrentAsPreset') }}
+            </button>
+            <button
+              type="button"
+              class="chip-outline"
+              :title="t('generator.importFromJson')"
+              @click="triggerImport"
+            >
+              {{ t('generator.importPresetFile') }}
+            </button>
         </div>
         <input
           ref="importFileInput"
@@ -295,25 +297,25 @@ function loadHistoryEntry(historyId: string) {
         @click.self="showSavePreset = false"
       >
         <div class="generator__preset-card">
-          <label class="label-section">Preset name</label>
+          <label class="label-section">{{ t('generator.presetName') }}</label>
           <input
             v-model="savePresetName"
             type="text"
-            placeholder="e.g. Horror only"
+            :placeholder="t('generator.presetNamePlaceholder')"
             class="generator__input-mb3"
             @keydown.enter="submitSavePreset"
           >
           <div class="generator__form-actions">
-            <button type="button" class="btn-ghost" @click="showSavePreset = false">Cancel</button>
-            <button type="button" class="btn-primary-sm" @click="submitSavePreset">Save</button>
+            <button type="button" class="btn-ghost" @click="showSavePreset = false">{{ t('generator.cancel') }}</button>
+            <button type="button" class="btn-primary-sm" @click="submitSavePreset">{{ t('generator.savePreset') }}</button>
           </div>
         </div>
       </div>
       <div class="panel-padded-mb3">
-        <label class="label-section">Generation settings</label>
+        <label class="label-section">{{ t('generator.generationSettings') }}</label>
         <div class="space-y-3">
           <div class="generator__batch-row">
-            <label class="generator__label-section">Scripts per batch:</label>
+            <label class="generator__label-section">{{ t('generator.scriptsPerBatch') }}</label>
             <input
               v-model.number="calculator.generatorBatchSize"
               type="number"
@@ -328,18 +330,18 @@ function loadHistoryEntry(historyId: string) {
               type="checkbox"
               class="checkbox-style"
             >
-            <span class="generator__label-text">Only keep scripts at or above target (Compat + Score)</span>
+            <span class="generator__label-text">{{ t('generator.skipLowQuality') }}</span>
           </label>
-          <p class="text-muted-xs">When on, scripts below your Target Compat / Target Score are not added to the batch. You may get fewer than requested.</p>
+          <p class="text-muted-xs">{{ t('generator.skipLowQualityHelp') }}</p>
           <label class="generator__label-wrap">
             <input
               v-model="calculator.generatorFullyDiverseTags"
               type="checkbox"
               class="checkbox-style"
             >
-            <span class="generator__label-text">Fully diverse tags</span>
+            <span class="generator__label-text">{{ t('generator.fullyDiverseTags') }}</span>
           </label>
-          <p class="text-muted-xs">When on, each retry uses different genres and setting (no skip until many different sets are tried).</p>
+          <p class="text-muted-xs">{{ t('generator.fullyDiverseTagsHelp') }}</p>
           <div class="generator__options-row">
             <label class="generator__label-wrap">
               <input
@@ -347,55 +349,55 @@ function loadHistoryEntry(historyId: string) {
                 type="checkbox"
                 class="checkbox-style"
               >
-              <span class="generator__label-text">Allow tag repetition</span>
+              <span class="generator__label-text">{{ $t('plan.allowTagRepetition') }}</span>
             </label>
             <template v-if="!calculator.releasePlanSettings.allowTagRepetition">
-              <span class="text-muted-base">Uniqueness:</span>
+              <span class="text-muted-base">{{ $t('plan.uniqueness') }}:</span>
               <select
                 v-model="calculator.releasePlanSettings.uniquenessLevel"
                 class="generator__input-sm"
               >
-                <option value="low">Low (no extra exclusion)</option>
-                <option value="medium">Medium (avoid tags in 2+ other films)</option>
-                <option value="high">High (no tag repeat)</option>
+                <option value="low">{{ $t('plan.level.low') }}</option>
+                <option value="medium">{{ $t('plan.level.medium') }}</option>
+                <option value="high">{{ $t('plan.level.high') }}</option>
               </select>
             </template>
           </div>
-          <p class="text-muted-xs">Uniqueness applies to Release Plan batch generation.</p>
+          <p class="text-muted-xs">{{ $t('plan.uniquenessHelp') }}</p>
         </div>
       </div>
       <div class="generator__grid-2">
         <div class="panel-padded">
           <div class="generator__target-row">
-            <label class="label-section label-section--mb0">Target Compat</label>
+            <label class="label-section label-section--mb0">{{ t('generator.targetCompat') }}</label>
             <input v-model.number="calculator.targetCompatibility" type="number" step="0.1" min="1" max="5" class="input-number-sm">
           </div>
           <input v-model.number="calculator.targetCompatibility" type="range" min="1" max="5" step="0.1" class="generator__range">
         </div>
         <div class="panel-padded">
           <div class="generator__target-row">
-            <label class="label-section label-section--mb0">Target Score</label>
+            <label class="label-section label-section--mb0">{{ t('generator.targetScore') }}</label>
             <input v-model.number="calculator.targetMovieScore" type="number" step="1" min="6" max="10" class="input-number-sm">
           </div>
           <input v-model.number="calculator.targetMovieScore" type="range" min="6" max="10" step="1" class="generator__range">
-          <p class="generator__hint">~{{ targetTagCount }} SE needed</p>
+          <p class="generator__hint">{{ t('generator.seNeeded', { n: targetTagCount }) }}</p>
         </div>
       </div>
       </div>
       <div class="divider"></div>
-      <CardHeader title="Locked Elements" collapsible v-model:collapsed="lockedCollapsed">
+      <CardHeader :title="t('generator.lockedElements')" collapsible v-model:collapsed="lockedCollapsed">
         <template #actions>
-          <button @click="resetLocks" class="btn-reset">Reset</button>
+          <button @click="resetLocks" class="btn-reset">{{ t('generator.reset') }}</button>
         </template>
       </CardHeader>
       <div v-show="!lockedCollapsed">
         <TagSelector context="generator" show-percent-slider />
       </div>
       <div class="divider"></div>
-      <CardHeader title="Excluded" color="danger" collapsible v-model:collapsed="excludedCollapsed">
+      <CardHeader :title="t('generator.excluded')" color="danger" collapsible v-model:collapsed="excludedCollapsed">
         <template #actions>
           <span v-if="excludedCollapsed && calculator.generatorExcludedTags.length > 0" class="generator__badge-danger">{{ calculator.generatorExcludedTags.length }}</span>
-          <button @click="resetExcluded" class="btn-reset">Reset</button>
+          <button @click="resetExcluded" class="btn-reset">{{ t('generator.reset') }}</button>
         </template>
       </CardHeader>
       <div v-show="!excludedCollapsed">
@@ -405,19 +407,19 @@ function loadHistoryEntry(historyId: string) {
         <Button variant="primary" full-width @click="generateScripts" :disabled="isGenerating">
           <span v-if="isGenerating" class="generator__spinner-wrap">
             <span class="generator__spinner"></span>
-            Generating...
+            {{ $t('plan.generating') }}
           </span>
-          <span v-else>Generate</span>
+          <span v-else>{{ t('generator.generate') }}</span>
         </Button>
       </div>
     </Card>
 
     <div v-if="isGenerating" class="modal-overlay">
       <div class="generator__popup">
-        <p class="label-semibold-sm">Generating...</p>
+        <p class="label-semibold-sm">{{ $t('plan.generatingOverlay') }}</p>
         <p class="text-muted-xs-mt1">
           {{ generationProgress.current }}/{{ generationProgress.total }}
-          <span v-if="(generationProgress.skipped ?? 0) > 0" class="generator__skipped-badge"> ({{ generationProgress.skipped }} skipped)</span>
+          <span v-if="(generationProgress.skipped ?? 0) > 0" class="generator__skipped-badge"> ({{ generationProgress.skipped }} {{ t('generator.skipped') }})</span>
         </p>
         <div class="generator__progress-track">
           <div class="generator__progress-fill" :style="{ width: `${(generationProgress.total ? (generationProgress.current / generationProgress.total) * 100 : 0)}%` }"></div>
@@ -426,16 +428,16 @@ function loadHistoryEntry(historyId: string) {
           type="button"
           class="btn-stop"
           :class="confirmStopBoard ? 'border-danger text-danger bg-danger/15 hover:bg-danger/25' : 'border-border text-text-muted hover:border-danger hover:text-danger'"
-          :title="confirmStopBoard ? 'Click again to stop generation' : 'Stop generation'"
+          :title="confirmStopBoard ? $t('plan.stopTooltipConfirm') : $t('plan.stopTooltip')"
           @click="onStopGenerationClick"
         >
-          {{ confirmStopBoard ? 'Confirm stop?' : 'Stop' }}
+          {{ confirmStopBoard ? $t('plan.stopConfirm') : $t('plan.stop') }}
         </button>
       </div>
     </div>
 
     <div v-if="calculator.generatedScripts.length > 0" class="space-y-2">
-      <h3 class="label-section-muted">Generated</h3>
+      <h3 class="label-section-muted">{{ t('generator.generated') }}</h3>
       <div class="generator__grid-2-3">
         <ScriptCard
           v-for="script in calculator.generatedScripts"
@@ -448,10 +450,10 @@ function loadHistoryEntry(historyId: string) {
     </div>
 
     <Card v-if="calculator.generationHistory.length > 0">
-      <CardHeader title="Generation History" collapsible v-model:collapsed="historyCollapsed">
+      <CardHeader :title="t('generator.generationHistory')" collapsible v-model:collapsed="historyCollapsed">
         <template #actions>
-          <span class="generator__sessions-count">{{ calculator.generationHistory.length }} sessions</span>
-          <button @click.stop="calculator.clearGenerationHistory()" class="generator__btn-clear">Clear</button>
+          <span class="generator__sessions-count">{{ t('generator.sessions', { n: calculator.generationHistory.length }) }}</span>
+          <button @click.stop="calculator.clearGenerationHistory()" class="generator__btn-clear">{{ t('generator.clear') }}</button>
         </template>
       </CardHeader>
       <div v-show="!historyCollapsed" class="space-y-3">
@@ -464,18 +466,18 @@ function loadHistoryEntry(historyId: string) {
             <div>
               <div class="generator__history-date">{{ formatHistoryDate(entry.generatedAt) }}</div>
               <div class="text-muted-sm-mt1">
-                Target: {{ entry.settings.targetCompatibility.toFixed(1) }} comp, {{ entry.settings.targetMovieScore }} score
-                <span class="mx-1">•</span>
-                {{ entry.settings.profile === 'save' ? 'From Save' : entry.settings.profile === 'starting' ? 'Starting' : entry.settings.profile === 'preset' ? 'Preset' : 'Custom' }}
+                {{ t('generator.targetPrefix') }} {{ entry.settings.targetCompatibility.toFixed(1) }} {{ t('generator.comp', { n: '' }) }}, {{ entry.settings.targetMovieScore }} {{ t('generator.score', { n: '' }) }}
+                <span class="mx-1">{{ t('generator.separator') }}</span>
+                {{ entry.settings.profile === 'save' ? t('generator.historyProfile.fromSave') : entry.settings.profile === 'starting' ? t('generator.historyProfile.starting') : entry.settings.profile === 'preset' ? t('generator.historyProfile.preset') : t('generator.historyProfile.custom') }}
               </div>
             </div>
             <div class="generator__flex-gap2">
-              <button @click="loadHistoryEntry(entry.id)" class="btn-load">Load</button>
+              <button @click="loadHistoryEntry(entry.id)" class="btn-load">{{ t('generator.loadHistory') }}</button>
               <button @click="calculator.removeFromGenerationHistory(entry.id)" class="generator__btn-remove">×</button>
             </div>
           </div>
           <div v-if="entry.settings.lockedTags && entry.settings.lockedTags.length > 0" class="mb-3">
-            <span class="generator__locked-label">Locked</span>
+            <span class="generator__locked-label">{{ t('generator.lockedLabel') }}</span>
             <div class="chips-row">
               <span
                 v-for="tag in entry.settings.lockedTags"
@@ -491,9 +493,9 @@ function loadHistoryEntry(historyId: string) {
             <div v-for="script in entry.scripts.slice(0, 3)" :key="script.uniqueId" class="generator__history-item">
               <span class="generator__history-score-value">{{ script.stats.movieScore }}</span>
               <span class="generator__history-score-sep">•</span>
-              <span class="generator__history-score-muted">{{ script.stats.avgComp.toFixed(2) }} comp</span>
+              <span class="generator__history-score-muted">{{ script.stats.avgComp.toFixed(2) }} {{ t('generator.comp') }}</span>
             </div>
-            <span v-if="entry.scripts.length > 3" class="generator__more-label">+{{ entry.scripts.length - 3 }} more</span>
+            <span v-if="entry.scripts.length > 3" class="generator__more-label">{{ t('generator.moreLabel', { n: entry.scripts.length - 3 }) }}</span>
           </div>
         </div>
       </div>

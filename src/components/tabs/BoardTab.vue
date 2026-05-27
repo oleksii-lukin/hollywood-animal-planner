@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCalculatorStore } from '@/stores/calculator'
 import { useGameDataStore } from '@/stores/gameData'
 import { calculateAudienceAffinity } from '@/utils/calculator'
@@ -26,6 +27,7 @@ function splitTagsByStartAndPlot(tags: SavedScript['tags']) {
   return { start, plot }
 }
 
+const { t } = useI18n()
 const calculator = useCalculatorStore()
 const gameData = useGameDataStore()
 
@@ -55,14 +57,14 @@ const hasOurMovies = computed(() => (calculator.saveFileData?.ourMovies?.length 
 
 function startEditName(script: SavedScript) {
   editingNameId.value = script.uniqueId
-  editingNameValue.value = script.name?.trim() || 'Untitled Script'
+  editingNameValue.value = script.name?.trim() || t('board.untitledScript')
   nextTick(() => editingNameInputRef.value?.focus())
 }
 
 function stopEditName(script: SavedScript, save: boolean) {
   if (editingNameId.value !== script.uniqueId) return
   if (save) {
-    const name = editingNameValue.value.trim() || 'Untitled Script'
+    const name = editingNameValue.value.trim() || t('board.untitledScript')
     calculator.updateScriptName(script.uniqueId, name)
   }
   editingNameId.value = null
@@ -243,18 +245,18 @@ function onRemoveFromBacklogClick(script: SavedScript) {
     <div class="board__list-wrap">
       <Card>
         <div class="board__toolbar">
-          <CardHeader title="Backlog" />
+          <CardHeader :title="$t('board.backlog')" />
           <button
             v-if="hasOurMovies"
             type="button"
             class="board__btn-accent-xs"
             @click="showOurMoviesModal = true"
           >
-            Our movies ({{ calculator.saveFileData?.ourMovies?.length ?? 0 }}) from save
+            {{ $t('board.ourMovies', { count: calculator.saveFileData?.ourMovies?.length ?? 0 }) }}
           </button>
         </div>
         <p class="board__intro">
-          Filter, sort, and open in Synergy or Advertisers.
+          {{ $t('board.intro') }}
         </p>
 
         <!-- Filters -->
@@ -262,62 +264,62 @@ function onRemoveFromBacklogClick(script: SavedScript) {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search by name or tag..."
+            :placeholder="$t('board.searchPlaceholder')"
             class="board__input-search"
           >
           <select
             v-model="statusFilter"
             class="board__filter-select"
           >
-            <option value="all">All statuses</option>
-            <option value="released">Released</option>
-            <option value="pre_production">Pre-production</option>
-            <option value="backlog">Backlog</option>
-            <option value="archived">Archived</option>
+            <option value="all">{{ $t('board.filter.allStatuses') }}</option>
+            <option value="released">{{ $t('board.filter.released') }}</option>
+            <option value="pre_production">{{ $t('board.filter.preProduction') }}</option>
+            <option value="backlog">{{ $t('board.filter.backlog') }}</option>
+            <option value="archived">{{ $t('board.filter.archived') }}</option>
           </select>
           <select
             v-model="sourceFilter"
             class="board__filter-select"
           >
-            <option value="all">All sources</option>
-            <option value="generator">Generator</option>
-            <option value="import">Import</option>
+            <option value="all">{{ $t('board.filter.allSources') }}</option>
+            <option value="generator">{{ $t('board.filter.generator') }}</option>
+            <option value="import">{{ $t('board.filter.import') }}</option>
           </select>
           <select
             v-model="sortBy"
             class="board__filter-select"
           >
-            <option value="date">Date</option>
-            <option value="score">Score</option>
-            <option value="comp">Compatibility</option>
+            <option value="date">{{ $t('board.sort.date') }}</option>
+            <option value="score">{{ $t('board.sort.score') }}</option>
+            <option value="comp">{{ $t('board.sort.compatibility') }}</option>
           </select>
           <button
             type="button"
             class="board__filter-btn"
             @click="sortOrder = sortOrder === 'desc' ? 'asc' : 'desc'"
           >
-            {{ sortOrder === 'desc' ? '↓ Desc' : '↑ Asc' }}
+            {{ sortOrder === 'desc' ? $t('board.sort.desc') : $t('board.sort.asc') }}
           </button>
         </div>
       </Card>
 
       <!-- List -->
-    <div v-if="filteredAndSortedScripts.length === 0" class="board__empty">
-      <template v-if="calculator.pinnedScripts.length === 0">
-        No scripts in backlog yet. Generate on the left and add the ones you like to the backlog.
-      </template>
-      <template v-else-if="statusFilter === 'archived'">
-        No archived scripts. Archive scripts from the main list to see them here.
-      </template>
-      <template v-else>
-        No scripts match the current filters.
-      </template>
-    </div>
-
-    <div v-else class="space-y-3">
-      <div class="label-section-muted">
-        {{ filteredAndSortedScripts.length }} script{{ filteredAndSortedScripts.length === 1 ? '' : 's' }}
+      <div v-if="filteredAndSortedScripts.length === 0" class="board__empty">
+        <template v-if="calculator.pinnedScripts.length === 0">
+          {{ $t('board.empty.noScripts') }}
+        </template>
+        <template v-else-if="statusFilter === 'archived'">
+          {{ $t('board.empty.noArchived') }}
+        </template>
+        <template v-else>
+          {{ $t('board.empty.noMatch') }}
+        </template>
       </div>
+
+      <div v-else class="space-y-3">
+          <div class="label-section-muted">
+            {{ t('board.scriptCount', filteredAndSortedScripts.length) }}
+          </div>
       <transition-group name="board-list" tag="div" class="board__grid">
         <div
           v-for="script in filteredAndSortedScripts"
@@ -343,18 +345,18 @@ function onRemoveFromBacklogClick(script: SavedScript) {
                 >
               </template>
               <template v-else>
-                <span class="script-card__name">{{ script.name || 'Untitled Script' }}</span>
+                <span class="script-card__name">{{ script.name || $t('board.untitledScript') }}</span>
                 <span
                   v-if="calculator.getGameMovieIdForPinnedScript(script.uniqueId) !== null"
                   class="board__chip-generator"
-                  :title="'Linked to game movie #' + calculator.getGameMovieIdForPinnedScript(script.uniqueId)"
+                  :title="$t('board.gameChipTooltip', { id: calculator.getGameMovieIdForPinnedScript(script.uniqueId) })"
                 >
-                  Game
+                  {{ $t('board.gameChip') }}
                 </span>
                 <button
                   type="button"
                   class="icon-btn-ghost-sm"
-                  title="Rename"
+                  :title="$t('board.rename')"
                   @click.stop="startEditName(script)"
                 >
                   <PencilIcon class="icon-size-sm" />
@@ -365,21 +367,21 @@ function onRemoveFromBacklogClick(script: SavedScript) {
                 class="board__source-chip"
                 :class="script.source === 'generator' ? 'bg-accent/20 text-accent' : 'bg-text-muted/20 text-text-muted'"
               >
-                {{ script.source === 'generator' ? 'Generator' : 'Import' }}
+                {{ script.source === 'generator' ? $t('board.source.generator') : $t('board.source.import') }}
               </span>
               <span
                 v-if="calculator.isScriptInPlan(script.uniqueId)"
                 class="board__chip-in-plan"
-                title="In release plan"
+                :title="$t('board.inPlanTooltip')"
               >
-                In plan
+                {{ $t('board.inPlan') }}
               </span>
               <span
                 v-if="calculator.isPinnedScriptReleased(script.uniqueId)"
                 class="board__chip-released"
-                title="Was released (completed plan)"
+                :title="$t('board.releasedTooltip')"
               >
-                Released
+                {{ $t('board.released') }}
               </span>
             </div>
             <div class="board__actions">
@@ -387,43 +389,43 @@ function onRemoveFromBacklogClick(script: SavedScript) {
                 v-if="!calculator.isScriptInPlan(script.uniqueId) && !calculator.isPinnedScriptReleased(script.uniqueId) && firstAvailablePlanSlotIndex >= 0"
                 type="button"
                 class="board__btn-add"
-                :title="'Add to Release Plan (slot ' + (firstAvailablePlanSlotIndex + 1) + ')'"
+                :title="$t('board.toPlanTooltip', { idx: firstAvailablePlanSlotIndex + 1 })"
                 @click.stop="addToFirstPlanSlot(script)"
               >
-                To Plan
+                {{ $t('board.toPlan') }}
               </button>
               <button
                 v-if="calculator.isScriptArchived(script.uniqueId)"
                 type="button"
                 class="board__btn-add"
-                title="Restore to backlog"
+                :title="$t('board.restoreTooltip')"
                 @click.stop="calculator.unarchiveFromBacklog(script.uniqueId)"
               >
-                Restore
+                {{ $t('board.restore') }}
               </button>
               <button
                 v-else
                 type="button"
                 class="board__archive-btn"
                 :class="archiveConfirmId === script.uniqueId ? 'border-danger text-danger bg-danger/15 hover:bg-danger/25' : 'border-border text-text-muted hover:border-accent hover:text-accent'"
-                :title="archiveConfirmId === script.uniqueId ? 'Click again to archive' : 'Archive (hide from default view)'"
+                :title="archiveConfirmId === script.uniqueId ? $t('board.archiveTooltipConfirm') : $t('board.archiveTooltip')"
                 @click.stop="onArchiveClick(script)"
               >
-                {{ archiveConfirmId === script.uniqueId ? 'Confirm?' : 'Archive' }}
+                {{ archiveConfirmId === script.uniqueId ? $t('board.archiveConfirm') : $t('board.archive') }}
               </button>
               <span class="board__score">{{ script.stats.movieScore }}</span>
-              <span class="board__comp">{{ script.stats.avgComp.toFixed(2) }} comp</span>
+              <span class="board__comp">{{ $t('board.comp', { comp: script.stats.avgComp.toFixed(2) }) }}</span>
             </div>
           </div>
           <!-- When collapsed only: date/save + tag preview + audience (hidden when expanded to avoid duplicate) -->
           <div v-show="expandedId !== script.uniqueId" class="space-y-1">
             <div class="info-row">
-              <span>Added: {{ formatPinnedDateFull(script.pinnedAt) }}</span>
-              <span v-if="script.saveFileName" class="text-success/90">Save: {{ script.saveFileName }}</span>
+              <span>{{ $t('board.added', { date: formatPinnedDateFull(script.pinnedAt) }) }}</span>
+              <span v-if="script.saveFileName" class="text-success/90">{{ $t('board.save', { fileName: script.saveFileName }) }}</span>
             </div>
             <template v-if="splitTagsByStartAndPlot(script.tags).start.length || splitTagsByStartAndPlot(script.tags).plot.length">
               <div class="board__meta-block">
-                <span class="board__meta-label">Setting & Genres</span>
+                <span class="board__meta-label">{{ $t('board.settingGenres') }}</span>
                 <span
                   v-for="tag in splitTagsByStartAndPlot(script.tags).start"
                   :key="tag.id"
@@ -434,7 +436,7 @@ function onRemoveFromBacklogClick(script: SavedScript) {
                 </span>
               </div>
               <div class="board__meta-block board__meta-block--pb2">
-                <span class="board__meta-label">Plot</span>
+                <span class="board__meta-label">{{ $t('board.plot') }}</span>
                 <template v-for="tag in splitTagsByStartAndPlot(script.tags).plot.slice(0, 6)" :key="tag.id">
                   <span class="board__tag-chip" :class="getTagCategoryClasses(tag.category, tag.id)">
                     {{ gameData.tags[tag.id]?.name ?? tag.id }}
@@ -444,8 +446,8 @@ function onRemoveFromBacklogClick(script: SavedScript) {
               </div>
             </template>
             <div v-if="getAdvertiserSummary(script.tags)" class="info-row-bottom">
-              <span>Audience: {{ getAdvertiserSummary(script.tags)!.targetAudiences.map((a) => a.name).join(', ') }}</span>
-              <span v-if="getAdvertiserSummary(script.tags)!.bestHoliday">Best: {{ getAdvertiserSummary(script.tags)!.bestHoliday!.name }}</span>
+              <span>{{ $t('board.audience', { names: getAdvertiserSummary(script.tags)!.targetAudiences.map((a) => a.name).join(', ') }) }}</span>
+              <span v-if="getAdvertiserSummary(script.tags)!.bestHoliday">{{ $t('board.best', { name: getAdvertiserSummary(script.tags)!.bestHoliday!.name }) }}</span>
             </div>
           </div>
 
@@ -454,7 +456,7 @@ function onRemoveFromBacklogClick(script: SavedScript) {
             <div class="board__expanded-grid">
               <div class="space-y-3">
                 <div v-if="splitTagsByStartAndPlot(script.tags).start.length > 0">
-                  <h4 class="section-title-sm">Setting & Genres</h4>
+                  <h4 class="section-title-sm">{{ $t('board.settingGenres') }}</h4>
                   <div class="chips-row">
                     <span
                       v-for="tag in splitTagsByStartAndPlot(script.tags).start"
@@ -467,7 +469,7 @@ function onRemoveFromBacklogClick(script: SavedScript) {
                   </div>
                 </div>
                 <div v-if="splitTagsByStartAndPlot(script.tags).plot.length > 0">
-                  <h4 class="section-title-sm">Plot elements</h4>
+                  <h4 class="section-title-sm">{{ $t('board.plotElements') }}</h4>
                   <div class="chips-row">
                     <span
                       v-for="tag in splitTagsByStartAndPlot(script.tags).plot"
@@ -481,17 +483,17 @@ function onRemoveFromBacklogClick(script: SavedScript) {
                 </div>
               </div>
               <div v-if="getAdvertiserSummary(script.tags)" class="board__advertiser-sidebar">
-                <h4 class="section-title-sm">Advertiser</h4>
+                <h4 class="section-title-sm">{{ $t('board.advertiser') }}</h4>
                 <p class="board__advertiser-hint">
-                  Audience: {{ getAdvertiserSummary(script.tags)!.targetAudiences.map((a) => a.name).join(', ') }}
-                  <span v-if="getAdvertiserSummary(script.tags)!.bestHoliday"> · Best: {{ getAdvertiserSummary(script.tags)!.bestHoliday!.name }}</span>
+                  {{ $t('board.audience', { names: getAdvertiserSummary(script.tags)!.targetAudiences.map((a) => a.name).join(', ') }) }}
+                  <span v-if="getAdvertiserSummary(script.tags)!.bestHoliday"> · {{ $t('board.best', { name: getAdvertiserSummary(script.tags)!.bestHoliday!.name }) }}</span>
                 </p>
                 <button
                   type="button"
                   class="board__advertiser-btn"
                   @click="analysisModalScript = script"
                 >
-                  Full Analysis →
+                  {{ $t('board.fullAnalysis') }}
                 </button>
               </div>
             </div>
@@ -500,45 +502,45 @@ function onRemoveFromBacklogClick(script: SavedScript) {
                 v-if="!calculator.isScriptInPlan(script.uniqueId) && !calculator.isPinnedScriptReleased(script.uniqueId) && firstAvailablePlanSlotIndex >= 0"
                 type="button"
                 class="btn-success-outline-xs"
-                :title="'Add to Release Plan (slot ' + (firstAvailablePlanSlotIndex + 1) + ')'"
+                :title="$t('board.toPlanTooltip', { idx: firstAvailablePlanSlotIndex + 1 })"
                 @click="addToFirstPlanSlot(script)"
               >
-                To Plan
+                {{ $t('board.toPlan') }}
               </button>
               <button
                 type="button"
                 class="btn-accent-outline-xs"
                 @click="openInSynergy(script)"
               >
-                Open in Synergy →
+                {{ $t('board.openInSynergy') }}
               </button>
               <button
                 type="button"
                 class="btn-accent-outline-xs"
                 @click="openInAdvertisers(script)"
               >
-                Open in Advertisers →
+                {{ $t('board.openInAdvertisers') }}
               </button>
               <button
                 type="button"
                 class="board__btn-ghost-sm"
                 @click="exportOne(script)"
               >
-                Export JSON
+                {{ $t('board.exportJson') }}
               </button>
               <button
                 type="button"
                 class="board__remove-btn"
                 :class="removeConfirmId === script.uniqueId ? 'border-danger text-danger bg-danger/15 hover:bg-danger/25' : 'border-danger text-danger hover:bg-danger/10'"
-                :title="removeConfirmId === script.uniqueId ? (removeConfirmStep === 1 ? 'Click again' : 'Click once more to remove permanently') : 'Remove from backlog (3 clicks to confirm)'"
+                :title="removeConfirmId === script.uniqueId ? (removeConfirmStep === 1 ? $t('board.removeTooltipClickAgain') : $t('board.removeTooltipFinal')) : $t('board.removeTooltip')"
                 @click="onRemoveFromBacklogClick(script)"
               >
                 {{
                   removeConfirmId !== script.uniqueId
-                    ? 'Remove from backlog'
+                    ? $t('board.removeFromBacklog')
                     : removeConfirmStep === 1
-                      ? 'Sure?'
-                      : 'Really remove?'
+                      ? $t('board.sure')
+                      : $t('board.reallyRemove')
                 }}
               </button>
             </div>

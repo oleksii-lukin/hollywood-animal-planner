@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, provide } from 'vue'
+import { ref, onMounted, onUnmounted, watch, provide } from 'vue'
 import { useGameDataStore } from '@/stores/gameData'
 import { initWasmCalculator } from '@/utils/wasmCalculator'
+import i18n from './i18n'
 import Navbar from '@/components/Navbar.vue'
 import TabNavigation from '@/components/TabNavigation.vue'
 import BoardTab from '@/components/tabs/BoardTab.vue'
@@ -46,10 +47,15 @@ onMounted(async () => {
 
   await gameData.loadData()
   await gameData.loadLocalization(gameData.currentLanguage)
+  ;(i18n.global.locale as any).value = gameData.currentLanguage
 
   wasmReady.value = await initWasmCalculator()
 
   isLoading.value = false
+})
+
+watch(() => gameData.currentLanguage, (lang) => {
+  ;(i18n.global.locale as any).value = lang
 })
 
 onUnmounted(() => {
@@ -78,7 +84,7 @@ provide('runAnalyzeOnNextAdvertisers', runAnalyzeOnNextAdvertisers)
         </main>
         
         <div v-else class="loading-wrap">
-          <div class="text-muted-base">Loading...</div>
+          <div class="text-muted-base">{{ $t('app.loading') }}</div>
         </div>
       </div>
     </div>

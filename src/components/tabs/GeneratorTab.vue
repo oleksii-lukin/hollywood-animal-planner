@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCalculatorStore } from '@/stores/calculator'
 import GeneratorPanel from '@/components/GeneratorPanel.vue'
 import ScriptCard from '@/components/ScriptCard.vue'
+
+const { t } = useI18n()
 
 const calculator = useCalculatorStore()
 const switchTab = inject<((tab: 'board' | 'generator' | 'synergy' | 'advertisers') => void) | undefined>('switchTab')
@@ -15,7 +18,7 @@ const pinnedScriptsNewestFirst = computed(() =>
 
 function savePinnedScripts() {
   if (calculator.pinnedScripts.length === 0) {
-    alert('No scripts in backlog to save.')
+    alert(t('generator.noScriptsToSave'))
     return
   }
 
@@ -51,10 +54,10 @@ function loadScripts(event: Event) {
             added++
           }
         }
-        alert(added > 0 ? `Loaded ${added} scripts.` : 'No new unique scripts found.')
+        alert(added > 0 ? t('generator.loadedScripts', { n: added }) : t('generator.noNewScripts'))
       }
     } catch {
-      alert('Error parsing JSON file.')
+      alert(t('generator.errorParsing'))
     }
   }
   reader.readAsText(file)
@@ -71,7 +74,7 @@ const fileInput = ref<HTMLInputElement | null>(null)
     <!-- Backlog -->
     <div class="space-y-2">
       <div class="generator-tab__header">
-        <h3 class="label-accent-xs">Backlog</h3>
+        <h3 class="label-accent-xs">{{ t('generator.backlog') }}</h3>
         <div class="flex-gap-1">
           <button
             v-if="switchTab && calculator.pinnedScripts.length > 0"
@@ -79,26 +82,26 @@ const fileInput = ref<HTMLInputElement | null>(null)
             @click="switchTab('board')"
             class="generator-tab__btn-accent"
           >
-            View in Board →
+            {{ t('generator.viewInBoard') }}
           </button>
           <button
             @click="savePinnedScripts"
             class="generator-tab__btn-muted"
           >
-            Save
+            {{ t('generator.save') }}
           </button>
           <button
             @click="fileInput?.click()"
             class="generator-tab__btn-muted"
           >
-            Load
+            {{ t('generator.load') }}
           </button>
           <input ref="fileInput" type="file" accept=".json" class="hidden" @change="loadScripts">
         </div>
       </div>
       
       <div v-if="calculator.pinnedScripts.length === 0" class="generator-tab__empty">
-        No scripts in backlog
+        {{ t('generator.noScripts') }}
       </div>
       <div v-else class="space-y-2">
         <div

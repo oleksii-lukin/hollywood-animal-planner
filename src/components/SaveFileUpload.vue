@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
+ 
 const emit = defineEmits<{
   fileSelected: [file: File]
 }>()
@@ -40,11 +40,10 @@ function openFilePicker() {
   >
     <div class="text-4xl mb-3">📁</div>
     <p class="text-muted-base">
-      Drag & drop your save file here<br>
-      or <span class="text-accent">click to browse</span>
+      {{ $t('saveUpload.dropText') }}
     </p>
     <p class="upload-zone__hint">
-      Usually located in: %USERPROFILE%\AppData\LocalLow\Weappy\Hollywood Animal\Saves
+      {{ $t('saveUpload.hint') }}
     </p>
     
     <input

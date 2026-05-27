@@ -99,14 +99,14 @@ function createFromSaveAndLink(movie: GameMovie) {
 </script>
 
 <template>
-  <Modal :open="open" title="Our movies (from save)" max-width="2xl" @close="emit('close')">
+  <Modal :open="open" :title="$t('ourMovies.title')" max-width="2xl" @close="emit('close')">
     <div class="modal-content-scroll">
       <p class="text-muted-sm">
-        Movies from the loaded save. Link a movie to a script in planning to track which game movie corresponds to which script.
+        {{ $t('ourMovies.desc') }}
       </p>
 
       <template v-if="!movies || movies.length === 0">
-        <p class="our-movies__empty-msg">No movies in this save. Load a save that contains our studio's movies.</p>
+        <p class="our-movies__empty-msg">{{ $t('ourMovies.empty') }}</p>
       </template>
 
       <template v-else>
@@ -120,9 +120,9 @@ function createFromSaveAndLink(movie: GameMovie) {
               <div class="min-w-0-flex-1">
                 <div class="our-movies__movie-name">{{ movie.name }}</div>
                 <div class="text-muted-sm-mt1">
-                  Release: {{ formatDate(movie.realReleaseDate ?? movie.scheduledRelease) }}
-                  <span v-if="calculator.isOurMovieReleased(movie)" class="our-movies__released">Released</span>
-                  <span v-else class="ml-2">Stage {{ movie.currentStage }}</span>
+                  {{ $t('ourMovies.release', { date: formatDate(movie.realReleaseDate ?? movie.scheduledRelease) }) }}
+                  <span v-if="calculator.isOurMovieReleased(movie)" class="our-movies__released">{{ $t('ourMovies.released') }}</span>
+                  <span v-else class="ml-2">{{ $t('ourMovies.stage', { n: movie.currentStage }) }}</span>
                 </div>
                 <div v-if="movie.genreIdsAndFractions?.length" class="our-movies__chips">
                   <span
@@ -156,34 +156,34 @@ function createFromSaveAndLink(movie: GameMovie) {
                   <span v-if="movie.contentIds.length > 6" class="our-movies__more-label">+{{ movie.contentIds.length - 6 }}</span>
                 </div>
                 <div v-if="movie.franchiseId >= 0 || movie.prequelId >= 0 || movie.sequelId >= 0" class="our-movies__meta">
-                  <span v-if="movie.franchiseId >= 0">Franchise {{ movie.franchiseId }}</span>
-                  <span v-if="movie.prequelId >= 0"> · Prequel {{ movie.prequelId }}</span>
-                  <span v-if="movie.sequelId >= 0"> · Sequel {{ movie.sequelId }}</span>
+                  <span v-if="movie.franchiseId >= 0">{{ $t('ourMovies.franchise', { id: movie.franchiseId }) }}</span>
+                  <span v-if="movie.prequelId >= 0"> · {{ $t('ourMovies.prequel', { id: movie.prequelId }) }}</span>
+                  <span v-if="movie.sequelId >= 0"> · {{ $t('ourMovies.sequel', { id: movie.sequelId }) }}</span>
                 </div>
                 <div v-if="movie.nominations?.length || movie.polluxes?.length || movie.topBO || movie.topCrit || movie.topAud" class="our-movies__meta-accent">
-                  <span v-if="movie.nominations?.length">Nominations {{ movie.nominations.length }}</span>
-                  <span v-if="movie.polluxes?.length"> · Pollux {{ movie.polluxes.length }}</span>
-                  <span v-if="movie.topBO || movie.topCrit || movie.topAud"> · BO#{{ movie.topBO }} Crit#{{ movie.topCrit }} Aud#{{ movie.topAud }}</span>
+                  <span v-if="movie.nominations?.length">{{ $t('ourMovies.nominations', { n: movie.nominations.length }) }}</span>
+                  <span v-if="movie.polluxes?.length"> · {{ $t('ourMovies.pollux', { n: movie.polluxes.length }) }}</span>
+                  <span v-if="movie.topBO || movie.topCrit || movie.topAud"> · {{ $t('ourMovies.achievements', { bo: movie.topBO, crit: movie.topCrit, aud: movie.topAud }) }}</span>
                 </div>
               </div>
 
               <div class="our-movies__actions-col">
                 <template v-if="linkedScript(movie)">
-                  <div class="our-movies__script-label">→ {{ linkedScript(movie)!.name || 'Script' }}</div>
+                  <div class="our-movies__script-label">{{ $t('ourMovies.linkedScript', { name: linkedScript(movie)!.name || '' }) }}</div>
                   <div class="flex-gap-1">
                     <button
                       type="button"
                       class="btn-accent-outline-sm"
                       @click="linkingMovieId = linkingMovieId === movie.id ? null : movie.id"
                     >
-                      Change
+                      {{ $t('ourMovies.change') }}
                     </button>
                     <button
                       type="button"
                       class="btn-danger-ghost-sm"
                       @click="unlink(movie.id)"
                     >
-                      Unlink
+                      {{ $t('ourMovies.unlink') }}
                     </button>
                   </div>
                 </template>
@@ -193,7 +193,7 @@ function createFromSaveAndLink(movie: GameMovie) {
                     class="btn-accent-outline-xs"
                     @click="linkingMovieId = linkingMovieId === movie.id ? null : movie.id"
                   >
-                    Link to script
+                    {{ $t('ourMovies.linkToScript') }}
                   </button>
                 </template>
 
@@ -203,10 +203,10 @@ function createFromSaveAndLink(movie: GameMovie) {
                     class="btn-accent-outline-full"
                     @click="createFromSaveAndLink(movie)"
                   >
-                    Create script from save and link
+                    {{ $t('ourMovies.createAndLink') }}
                   </button>
                   <div>
-                    <div class="our-movies__hint">Or choose existing script:</div>
+                    <div class="our-movies__hint">{{ $t('ourMovies.chooseExisting') }}</div>
                     <div class="space-y-0.5">
                       <button
                         v-for="script in pinnedScriptsForLink"
@@ -215,9 +215,9 @@ function createFromSaveAndLink(movie: GameMovie) {
                         class="our-movies__script-link"
                         @click="setLink(movie.id, script.uniqueId)"
                       >
-                        {{ script.name || 'Untitled' }} <span class="text-text-muted">· {{ script.stats.movieScore }}</span>
+                        {{ $t('ourMovies.scriptItem', { name: script.name || '', score: script.stats.movieScore }) }}
                       </button>
-                      <p v-if="pinnedScriptsForLink.length === 0" class="text-muted-xs">No unlinked scripts in backlog</p>
+                      <p v-if="pinnedScriptsForLink.length === 0" class="text-muted-xs">{{ $t('ourMovies.noUnlinked') }}</p>
                     </div>
                   </div>
                 </div>

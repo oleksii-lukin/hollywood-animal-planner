@@ -205,9 +205,9 @@ const savedMeta = computed(() => {
           @click.stop="togglePin"
           class="script-card__pin-chip"
           :class="isPinned ? 'border-success text-success bg-success/10' : 'border-border text-text-muted hover:border-accent hover:text-accent'"
-          :title="isPinned ? 'In backlog (click to remove)' : 'Add to backlog'"
+          :title="isPinned ? $t('scriptCard.inBacklogTooltip') : $t('scriptCard.addBacklogTooltip')"
         >
-          {{ isPinned ? 'In backlog' : '+ Backlog' }}
+          {{ isPinned ? $t('scriptCard.inBacklog') : $t('scriptCard.addBacklog') }}
         </button>
       </div>
       
@@ -230,7 +230,7 @@ const savedMeta = computed(() => {
         @click.stop="openAnalysis"
         class="script-card__action-accent"
       >
-        Advertisers →
+        {{ $t('scriptCard.advertisers') }}
       </button>
     </div>
 
@@ -253,40 +253,40 @@ const savedMeta = computed(() => {
     >
       <div class="script-card__title-wrap">
         <!-- Editable name for backlog -->
-        <input
+          <input
           v-if="isPinnedSection"
           type="text"
-          :value="script.name || 'Untitled Script'"
+          :value="script.name || $t('scriptCard.untitledScript')"
           @input="updateName"
           @click.stop
           class="input-inline-edit"
-          placeholder="Script Name"
+          :placeholder="$t('scriptCard.scriptName')"
         >
         
         <!-- Stats badges (same order as compact: Score, Comp, Qual) -->
         <div class="script-card__stats-row">
           <div class="script-card__stat-item">
-            <span class="script-card__stat-label">Score</span>
+            <span class="script-card__stat-label">{{ $t('scriptCard.score') }}</span>
             <span class="script-card__score-value">
               {{ script.stats.movieScore }}
             </span>
           </div>
           <div class="script-card__stat-item">
-            <span class="script-card__stat-label">Comp</span>
+            <span class="script-card__stat-label">{{ $t('scriptCard.comp') }}</span>
             <span class="script-card__comp-value" :class="compClass">
               {{ script.stats.avgComp.toFixed(1) }}
             </span>
           </div>
           <div class="script-card__stat-item">
-            <span class="script-card__stat-label">Qual</span>
+            <span class="script-card__stat-label">{{ $t('scriptCard.qual') }}</span>
             <span class="script-card__score-value">
               {{ script.stats.maxScriptQuality }}
             </span>
           </div>
         </div>
         <div v-if="savedMeta" class="meta-row">
-          <span>Added: {{ savedMeta.added }}</span>
-          <span v-if="savedMeta.saveFileName" class="text-success/90">Save: {{ savedMeta.saveFileName }}</span>
+          <span>{{ $t('scriptCard.added', { date: savedMeta.added }) }}</span>
+          <span v-if="savedMeta.saveFileName" class="text-success/90">{{ $t('scriptCard.save', { fileName: savedMeta.saveFileName }) }}</span>
         </div>
       </div>
 
@@ -296,9 +296,9 @@ const savedMeta = computed(() => {
         @click.stop="togglePin"
         class="chip-source"
         :class="isPinned ? 'border-success text-success bg-success/10 hover:bg-success/20' : 'border-border text-text-muted hover:border-accent hover:text-accent'"
-        :title="isPinned ? 'In backlog (click to remove)' : 'Add to backlog'"
+        :title="isPinned ? $t('scriptCard.inBacklogTooltip') : $t('scriptCard.addBacklogTooltip')"
       >
-        {{ isPinned ? 'In backlog' : '+ Backlog' }}
+        {{ isPinned ? $t('scriptCard.inBacklog') : $t('scriptCard.addBacklog') }}
       </button>
     </div>
 
@@ -308,7 +308,7 @@ const savedMeta = computed(() => {
       <div class="script-card__expand-grid">
         <!-- Left: Tags -->
         <div>
-          <h4 class="section-title-sm">Tags</h4>
+          <h4 class="section-title-sm">{{ $t('scriptCard.tags') }}</h4>
           <div class="chips-row">
             <span
               v-for="tag in sortedTags"
@@ -323,12 +323,12 @@ const savedMeta = computed(() => {
 
         <!-- Right: Advertiser Info -->
         <div v-if="advertiserInfo" class="script-card__sidebar">
-          <h4 class="section-title-sm">Advertiser Info</h4>
+          <h4 class="section-title-sm">{{ $t('scriptCard.advertiserInfo') }}</h4>
           
           <div class="space-y-2">
             <!-- Target Audiences -->
             <div>
-              <span class="script-card__sidebar-label">Audience</span>
+              <span class="script-card__sidebar-label">{{ $t('scriptCard.audience') }}</span>
               <div v-if="advertiserInfo.targetAudiences.length > 0" class="chips-row-05">
                 <span
                   v-for="audience in advertiserInfo.targetAudiences"
@@ -341,18 +341,18 @@ const savedMeta = computed(() => {
                   {{ audience.name }}
                 </span>
               </div>
-              <span v-else class="script-card__none">None</span>
+              <span v-else class="script-card__none">{{ $t('scriptCard.none') }}</span>
             </div>
 
             <!-- Best Holiday & Movie Lean & Advertisers inline -->
             <div class="script-card__meta-row">
               <div>
-                <span class="text-text-muted">Holiday:</span>
+                <span class="text-text-muted">{{ $t('scriptCard.holiday') }}</span>
                 <span v-if="advertiserInfo.bestHoliday" class="text-accent ml-1">{{ advertiserInfo.bestHoliday.name }}</span>
                 <span v-else class="text-text-muted/50 ml-1">-</span>
               </div>
               <div>
-                <span class="text-text-muted">Lean:</span>
+                <span class="text-text-muted">{{ $t('scriptCard.lean') }}</span>
                 <span 
                   class="script-card__value-inline"
                   :class="{
@@ -366,7 +366,7 @@ const savedMeta = computed(() => {
 
             <!-- Recommended Advertisers -->
             <div v-if="advertiserInfo.recommendedAgents.length > 0">
-              <span class="script-card__sidebar-label-sm">Advertisers</span>
+              <span class="script-card__sidebar-label-sm">{{ $t('scriptCard.advertisersLabel') }}</span>
               <div class="chips-row">
                 <span
                   v-for="agent in advertiserInfo.recommendedAgents"
@@ -388,7 +388,7 @@ const savedMeta = computed(() => {
           @click="openAnalysis"
           class="script-card__btn-advertisers"
         >
-          Full Analysis →
+          {{ $t('scriptCard.fullAnalysis') }}
         </button>
       </div>
     </div>

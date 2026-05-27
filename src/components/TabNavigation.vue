@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 export type TabId = 'board' | 'plan' | 'generator' | 'synergy' | 'advertisers'
 
 defineProps<{
@@ -9,15 +11,17 @@ const emit = defineEmits<{
   change: [tab: TabId]
 }>()
 
+const { t } = useI18n()
+
 const mainTabs: { id: TabId; label: string }[] = [
-  { id: 'board', label: 'Board' },
-  { id: 'plan', label: 'Release Plan' }
+  { id: 'board', label: t('tab.board') },
+  { id: 'plan', label: t('tab.plan') }
 ]
 
 const subTabs: { id: TabId; label: string }[] = [
-  { id: 'generator', label: 'Script Generator' },
-  { id: 'synergy', label: 'SE Compatibility' },
-  { id: 'advertisers', label: 'Best Advertisers' }
+  { id: 'generator', label: t('tab.generator') },
+  { id: 'synergy', label: t('tab.synergy') },
+  { id: 'advertisers', label: t('tab.advertisers') }
 ]
 </script>
 
@@ -37,7 +41,7 @@ const subTabs: { id: TabId; label: string }[] = [
       </button>
     </div>
     <div class="tab-nav__tools-row">
-      <span class="tab-nav__tools-label">Tools</span>
+      <span class="tab-nav__tools-label">{{ $t('tab.tools') }}</span>
       <span class="text-border">|</span>
       <button
         v-for="tab in subTabs"
