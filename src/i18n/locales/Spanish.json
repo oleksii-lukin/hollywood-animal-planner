@@ -195,8 +195,13 @@
   "ourMovies.createAndLink": "Crear guión desde partida y vincular",
   "ourMovies.chooseExisting": "O elegir guión existente:",
   "ourMovies.scriptItem": "{name} · {score}",
-  "ourMovies.noUnlinked": "No hay guiones desvinculados en pendientes"
-,
+  "ourMovies.noUnlinked": "No hay guiones desvinculados en pendientes",
+  "ourMovies.tabDefault": "Predeterminado",
+  "ourMovies.tabImported": "Importadas",
+  "ourMovies.tabUnprocessed": "Sin procesar",
+  "ourMovies.emptyImported": "No hay películas importadas.",
+  "ourMovies.emptyUnprocessed": "Todas las películas ya están importadas.",
+
   "generator.title": "Ajustes del generador",
   "generator.lockedElements": "Elementos bloqueados",
   "generator.excluded": "Excluidos",

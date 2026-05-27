@@ -195,8 +195,13 @@
   "ourMovies.createAndLink": "Skript aus Spielstand erstellen und verknüpfen",
   "ourMovies.chooseExisting": "Oder vorhandenes Skript wählen:",
   "ourMovies.scriptItem": "{name} · {score}",
-  "ourMovies.noUnlinked": "Keine unverknüpften Skripte im Rückstand"
-,
+  "ourMovies.noUnlinked": "Keine unverknüpften Skripte im Rückstand",
+  "ourMovies.tabDefault": "Standard",
+  "ourMovies.tabImported": "Importiert",
+  "ourMovies.tabUnprocessed": "Unverarbeitet",
+  "ourMovies.emptyImported": "Keine importierten Filme.",
+  "ourMovies.emptyUnprocessed": "Alle Filme bereits importiert.",
+
   "generator.title": "Generator-Einstellungen",
   "generator.lockedElements": "Gesperrte Elemente",
   "generator.excluded": "Ausgeschlossen",

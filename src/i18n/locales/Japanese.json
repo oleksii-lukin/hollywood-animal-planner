@@ -195,8 +195,13 @@
   "ourMovies.createAndLink": "セーブデータからスクリプトを作成してリンク",
   "ourMovies.chooseExisting": "または既存のスクリプトを選択:",
   "ourMovies.scriptItem": "{name} · {score}",
-  "ourMovies.noUnlinked": "バックログに未リンクのスクリプトはありません"
-,
+  "ourMovies.noUnlinked": "バックログに未リンクのスクリプトはありません",
+  "ourMovies.tabDefault": "デフォルト",
+  "ourMovies.tabImported": "インポート済み",
+  "ourMovies.tabUnprocessed": "未処理",
+  "ourMovies.emptyImported": "インポートされた映画はありません。",
+  "ourMovies.emptyUnprocessed": "すべての映画は既にインポートされています。",
+
   "generator.title": "生成設定",
   "generator.lockedElements": "ロックされた要素",
   "generator.excluded": "除外",

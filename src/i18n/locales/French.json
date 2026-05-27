@@ -195,8 +195,13 @@
   "ourMovies.createAndLink": "Créer un script depuis la sauvegarde et lier",
   "ourMovies.chooseExisting": "Ou choisir un script existant :",
   "ourMovies.scriptItem": "{name} · {score}",
-  "ourMovies.noUnlinked": "Aucun script non lié dans la réserve"
-,
+  "ourMovies.noUnlinked": "Aucun script non lié dans la réserve",
+  "ourMovies.tabDefault": "Par défaut",
+  "ourMovies.tabImported": "Importés",
+  "ourMovies.tabUnprocessed": "Non traités",
+  "ourMovies.emptyImported": "Aucun film importé.",
+  "ourMovies.emptyUnprocessed": "Tous les films déjà importés.",
+
   "generator.title": "Paramètres du générateur",
   "generator.lockedElements": "Éléments verrouillés",
   "generator.excluded": "Exclus",

@@ -19,6 +19,7 @@ const calculator = useCalculatorStore()
 const gameData = useGameDataStore()
 
 const linkingMovieId = ref<number | null>(null)
+const activeTab = ref<'default' | 'imported' | 'unprocessed'>('default')
 
 /** Scripts available for linking: not linked to any other movie (or linked to the current one when changing). */
 const pinnedScriptsForLink = computed(() => {
@@ -39,6 +40,15 @@ const sortedMovies = computed(() => {
     const dateB = b.realReleaseDate ?? b.scheduledRelease ?? b.creationDate ?? ''
     return new Date(dateB).getTime() - new Date(dateA).getTime()
   })
+})
+
+const importedMovies = computed(() => sortedMovies.value.filter(m => linkedScript(m)))
+const unprocessedMovies = computed(() => sortedMovies.value.filter(m => !linkedScript(m)))
+
+const filteredMovies = computed(() => {
+  if (activeTab.value === 'imported') return importedMovies.value
+  if (activeTab.value === 'unprocessed') return unprocessedMovies.value
+  return sortedMovies.value
 })
 
 function formatDate(iso: string | null): string {
@@ -110,9 +120,39 @@ function createFromSaveAndLink(movie: GameMovie) {
       </template>
 
       <template v-else>
-        <div class="space-y-3">
+        <div class="save-modal__tabs">
+          <button
+            @click="activeTab = 'default'"
+            class="save-modal__tab"
+            :class="activeTab === 'default' ? 'text-accent border-b-2 border-accent -mb-px' : 'text-text-muted hover:text-text'"
+          >
+            {{ $t('ourMovies.tabDefault') }}
+          </button>
+          <button
+            @click="activeTab = 'imported'"
+            class="save-modal__tab"
+            :class="activeTab === 'imported' ? 'text-accent border-b-2 border-accent -mb-px' : 'text-text-muted hover:text-text'"
+          >
+            {{ $t('ourMovies.tabImported') }}
+          </button>
+          <button
+            @click="activeTab = 'unprocessed'"
+            class="save-modal__tab"
+            :class="activeTab === 'unprocessed' ? 'text-accent border-b-2 border-accent -mb-px' : 'text-text-muted hover:text-text'"
+          >
+            {{ $t('ourMovies.tabUnprocessed') }}
+          </button>
+        </div>
+
+        <template v-if="filteredMovies.length === 0">
+          <p class="our-movies__empty-msg">
+            {{ activeTab === 'imported' ? $t('ourMovies.emptyImported') : $t('ourMovies.emptyUnprocessed') }}
+          </p>
+        </template>
+
+        <div v-else class="space-y-3">
           <div
-            v-for="movie in sortedMovies"
+            v-for="movie in filteredMovies"
             :key="movie.id"
             class="our-movies__card"
           >

@@ -195,8 +195,13 @@
   "ourMovies.createAndLink": "Стварыць сцэнарый з захавання і прывязаць",
   "ourMovies.chooseExisting": "Або выбраць існуючы сцэнарый:",
   "ourMovies.scriptItem": "{name} · {score}",
-  "ourMovies.noUnlinked": "Няма непрывязаных сцэнарыяў у бэклогу"
-,
+  "ourMovies.noUnlinked": "Няма непрывязаных сцэнарыяў у бэклогу",
+  "ourMovies.tabDefault": "Па змаўчанні",
+  "ourMovies.tabImported": "Імпартаваныя",
+  "ourMovies.tabUnprocessed": "Неапрацаваныя",
+  "ourMovies.emptyImported": "Няма імпартаваных фільмаў.",
+  "ourMovies.emptyUnprocessed": "Усе фільмы ўжо імпартаваныя.",
+
   "generator.title": "Налады генератара",
   "generator.lockedElements": "Заблакіраваныя элементы",
   "generator.excluded": "Выключаныя",

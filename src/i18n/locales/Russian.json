@@ -195,8 +195,13 @@
   "ourMovies.createAndLink": "Создать сценарий из сохранения и привязать",
   "ourMovies.chooseExisting": "Или выбрать существующий сценарий:",
   "ourMovies.scriptItem": "{name} · {score}",
-  "ourMovies.noUnlinked": "Нет непривязанных сценариев в бэклоге"
-,
+  "ourMovies.noUnlinked": "Нет непривязанных сценариев в бэклоге",
+  "ourMovies.tabDefault": "По умолчанию",
+  "ourMovies.tabImported": "Импортированные",
+  "ourMovies.tabUnprocessed": "Необработанные",
+  "ourMovies.emptyImported": "Нет импортированных фильмов.",
+  "ourMovies.emptyUnprocessed": "Все фильмы уже импортированы.",
+
   "generator.title": "Настройки генератора",
   "generator.lockedElements": "Заблокированные элементы",
   "generator.excluded": "Исключённые",

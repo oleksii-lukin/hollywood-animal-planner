@@ -195,8 +195,13 @@
   "ourMovies.createAndLink": "Створити сценарій з сейву та прив'язати",
   "ourMovies.chooseExisting": "Або виберіть існуючий сценарій:",
   "ourMovies.scriptItem": "{name} · {score}",
-  "ourMovies.noUnlinked": "Немає неприв'язаних сценаріїв у черзі"
-,
+  "ourMovies.noUnlinked": "Немає неприв'язаних сценаріїв у черзі",
+  "ourMovies.tabDefault": "За замовчуванням",
+  "ourMovies.tabImported": "Імпортовані",
+  "ourMovies.tabUnprocessed": "Необроблені",
+  "ourMovies.emptyImported": "Немає імпортованих фільмів.",
+  "ourMovies.emptyUnprocessed": "Усі фільми вже імпортовані.",
+
   "generator.title": "Налаштування генератора",
   "generator.lockedElements": "Заблоковані елементи",
   "generator.excluded": "Виключені",

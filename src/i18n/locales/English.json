@@ -196,6 +196,11 @@
   "ourMovies.chooseExisting": "Or choose existing script:",
   "ourMovies.scriptItem": "{name} · {score}",
   "ourMovies.noUnlinked": "No unlinked scripts in backlog",
+  "ourMovies.tabDefault": "Default",
+  "ourMovies.tabImported": "Imported",
+  "ourMovies.tabUnprocessed": "Unprocessed",
+  "ourMovies.emptyImported": "No imported movies.",
+  "ourMovies.emptyUnprocessed": "All movies already imported.",
 
   "generator.title": "Generator Settings",
   "generator.lockedElements": "Locked Elements",
