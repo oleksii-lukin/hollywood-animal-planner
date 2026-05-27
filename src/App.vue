@@ -45,7 +45,7 @@ onMounted(async () => {
   window.addEventListener('popstate', onPopState)
 
   await gameData.loadData()
-  await gameData.loadLocalization('English')
+  await gameData.loadLocalization(gameData.currentLanguage)
 
   wasmReady.value = await initWasmCalculator()
 

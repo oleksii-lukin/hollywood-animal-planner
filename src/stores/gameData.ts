@@ -2,12 +2,14 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Tag, TagCategory, Demographic, AdAgent, Holiday, DemographicId } from '@/types/game'
 
+const LANGUAGE_KEY = 'hollywood-animal-planner-language'
+
 export const useGameDataStore = defineStore('gameData', () => {
   const tags = ref<Record<string, Tag>>({})
   const compatibility = ref<Record<string, Record<string, number>>>({})
   const genrePairs = ref<Record<string, Record<string, { Item1: number; Item2: number }>>>({})
   const isLoaded = ref(false)
-  const currentLanguage = ref('English')
+  const currentLanguage = ref(localStorage.getItem(LANGUAGE_KEY) || 'English')
   const localizationMap = ref<Record<string, string>>({})
 
   const categories: TagCategory[] = [
@@ -196,6 +198,7 @@ export const useGameDataStore = defineStore('gameData', () => {
       }
       
       currentLanguage.value = language
+      localStorage.setItem(LANGUAGE_KEY, language)
     } catch (e) {
       console.error('Localization error:', e)
     }
