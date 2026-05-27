@@ -201,6 +201,9 @@
   "ourMovies.tabUnprocessed": "Необроблені",
   "ourMovies.emptyImported": "Немає імпортованих фільмів.",
   "ourMovies.emptyUnprocessed": "Усі фільми вже імпортовані.",
+  "ourMovies.tabStage": "За етапами",
+  "ourMovies.tabStageReleased": "Випущені",
+  "ourMovies.tabStageLabel": "Етап {n}",
 
   "generator.title": "Налаштування генератора",
   "generator.lockedElements": "Заблоковані елементи",

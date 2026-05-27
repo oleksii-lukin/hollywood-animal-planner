@@ -201,6 +201,9 @@
   "ourMovies.tabUnprocessed": "未处理",
   "ourMovies.emptyImported": "没有已导入的电影。",
   "ourMovies.emptyUnprocessed": "所有电影均已导入。",
+  "ourMovies.tabStage": "按阶段",
+  "ourMovies.tabStageReleased": "已发布",
+  "ourMovies.tabStageLabel": "阶段{n}",
 
   "generator.title": "生成器设置",
   "generator.lockedElements": "锁定的元素",

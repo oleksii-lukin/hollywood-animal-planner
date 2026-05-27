@@ -201,6 +201,9 @@
   "ourMovies.tabUnprocessed": "Não processados",
   "ourMovies.emptyImported": "Nenhum filme importado.",
   "ourMovies.emptyUnprocessed": "Todos os filmes já importados.",
+  "ourMovies.tabStage": "Por estágio",
+  "ourMovies.tabStageReleased": "Lançados",
+  "ourMovies.tabStageLabel": "Estágio {n}",
 
   "generator.title": "Definições do gerador",
   "generator.lockedElements": "Elementos bloqueados",

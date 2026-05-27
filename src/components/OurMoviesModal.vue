@@ -19,7 +19,7 @@ const calculator = useCalculatorStore()
 const gameData = useGameDataStore()
 
 const linkingMovieId = ref<number | null>(null)
-const activeTab = ref<'default' | 'imported' | 'unprocessed'>('default')
+const activeTab = ref<'default' | 'imported' | 'unprocessed' | 'stage'>('default')
 
 /** Scripts available for linking: not linked to any other movie (or linked to the current one when changing). */
 const pinnedScriptsForLink = computed(() => {
@@ -49,6 +49,35 @@ const filteredMovies = computed(() => {
   if (activeTab.value === 'imported') return importedMovies.value
   if (activeTab.value === 'unprocessed') return unprocessedMovies.value
   return sortedMovies.value
+})
+
+const collapsedStages = ref<Set<string>>(new Set())
+
+function toggleStage(key: string) {
+  if (collapsedStages.value.has(key)) {
+    collapsedStages.value.delete(key)
+  } else {
+    collapsedStages.value.add(key)
+  }
+}
+
+const moviesByStage = computed(() => {
+  const groups: { type: 'released' | 'stage'; key: string; stage?: number; movies: GameMovie[] }[] = []
+  const released = sortedMovies.value.filter(m => !!m.actuallyReleased)
+  if (released.length) {
+    groups.push({ type: 'released', key: '_released', movies: released })
+  }
+  const stageMap = new Map<number, GameMovie[]>()
+  for (const m of sortedMovies.value) {
+    if (!!m.actuallyReleased) continue
+    const s = m.currentStage ?? 0
+    if (!stageMap.has(s)) stageMap.set(s, [])
+    stageMap.get(s)!.push(m)
+  }
+  for (const [stage, movs] of [...stageMap.entries()].sort((a, b) => a[0] - b[0])) {
+    groups.push({ type: 'stage', key: String(stage), stage, movies: movs })
+  }
+  return groups
 })
 
 function formatDate(iso: string | null): string {
@@ -142,129 +171,276 @@ function createFromSaveAndLink(movie: GameMovie) {
           >
             {{ $t('ourMovies.tabUnprocessed') }}
           </button>
+          <button
+            @click="activeTab = 'stage'"
+            class="save-modal__tab"
+            :class="activeTab === 'stage' ? 'text-accent border-b-2 border-accent -mb-px' : 'text-text-muted hover:text-text'"
+          >
+            {{ $t('ourMovies.tabStage') }}
+          </button>
         </div>
 
-        <template v-if="filteredMovies.length === 0">
-          <p class="our-movies__empty-msg">
-            {{ activeTab === 'imported' ? $t('ourMovies.emptyImported') : $t('ourMovies.emptyUnprocessed') }}
-          </p>
-        </template>
-
-        <div v-else class="space-y-3">
-          <div
-            v-for="movie in filteredMovies"
-            :key="movie.id"
-            class="our-movies__card"
-          >
-            <div class="our-movies__movie-row">
-              <div class="min-w-0-flex-1">
-                <div class="our-movies__movie-name">{{ movie.name }}</div>
-                <div class="text-muted-sm-mt1">
-                  {{ $t('ourMovies.release', { date: formatDate(movie.realReleaseDate ?? movie.scheduledRelease) }) }}
-                  <span v-if="calculator.isOurMovieReleased(movie)" class="our-movies__released">{{ $t('ourMovies.released') }}</span>
-                  <span v-else class="ml-2">{{ $t('ourMovies.stage', { n: movie.currentStage }) }}</span>
-                </div>
-                <div v-if="movie.genreIdsAndFractions?.length" class="our-movies__chips">
-                  <span
-                    v-for="g in movie.genreIdsAndFractions"
-                    :key="g.Item1"
-                    class="chip-sm-inline"
-                    :class="getTagCategoryClasses('Genre', g.Item1)"
-                  >
-                    {{ tagName(g.Item1) }}{{ g.Item2 ? ' ' + g.Item2 : '' }}
-                  </span>
-                </div>
-                <div v-if="movie.settingIds?.length" class="our-movies__chips our-movies__chips--mt1">
-                  <span
-                    v-for="sid in movie.settingIds"
-                    :key="sid"
-                    class="chip-sm-inline"
-                    :class="getTagCategoryClasses(tagCategory(sid))"
-                  >
-                    {{ tagName(sid) }}
-                  </span>
-                </div>
-                <div v-if="movie.contentIds?.length" class="our-movies__chips">
-                  <span
-                    v-for="cid in movie.contentIds.slice(0, 6)"
-                    :key="cid"
-                    class="chip-sm-inline"
-                    :class="getTagCategoryClasses(tagCategory(cid))"
-                  >
-                    {{ tagName(cid) }}
-                  </span>
-                  <span v-if="movie.contentIds.length > 6" class="our-movies__more-label">+{{ movie.contentIds.length - 6 }}</span>
-                </div>
-                <div v-if="movie.franchiseId >= 0 || movie.prequelId >= 0 || movie.sequelId >= 0" class="our-movies__meta">
-                  <span v-if="movie.franchiseId >= 0">{{ $t('ourMovies.franchise', { id: movie.franchiseId }) }}</span>
-                  <span v-if="movie.prequelId >= 0"> · {{ $t('ourMovies.prequel', { id: movie.prequelId }) }}</span>
-                  <span v-if="movie.sequelId >= 0"> · {{ $t('ourMovies.sequel', { id: movie.sequelId }) }}</span>
-                </div>
-                <div v-if="movie.nominations?.length || movie.polluxes?.length || movie.topBO || movie.topCrit || movie.topAud" class="our-movies__meta-accent">
-                  <span v-if="movie.nominations?.length">{{ $t('ourMovies.nominations', { n: movie.nominations.length }) }}</span>
-                  <span v-if="movie.polluxes?.length"> · {{ $t('ourMovies.pollux', { n: movie.polluxes.length }) }}</span>
-                  <span v-if="movie.topBO || movie.topCrit || movie.topAud"> · {{ $t('ourMovies.achievements', { bo: movie.topBO, crit: movie.topCrit, aud: movie.topAud }) }}</span>
-                </div>
+        <!-- Stage tab: grouped by stage -->
+        <template v-if="activeTab === 'stage'">
+          <div class="space-y-2">
+            <div v-for="group in moviesByStage" :key="group.key">
+              <div
+                class="flex items-center gap-2 cursor-pointer select-none hover:opacity-80 py-1"
+                @click="toggleStage(group.key)"
+              >
+                <span
+                  class="text-[10px] transition-transform duration-200"
+                  :class="collapsedStages.has(group.key) ? '-rotate-90' : 'rotate-0'"
+                >▼</span>
+                <span class="text-xs font-semibold uppercase text-accent">
+                  <template v-if="group.type === 'released'">{{ $t('ourMovies.tabStageReleased') }}</template>
+                  <template v-else>{{ $t('ourMovies.tabStageLabel', { n: group.stage }) }}</template>
+                </span>
+                <span class="text-muted-xs">({{ group.movies.length }})</span>
               </div>
+              <div v-show="!collapsedStages.has(group.key)" class="space-y-3">
+                <div
+                  v-for="movie in group.movies"
+                  :key="movie.id"
+                  class="our-movies__card"
+                >
+                  <div class="our-movies__movie-row">
+                    <div class="min-w-0-flex-1">
+                      <div class="our-movies__movie-name">{{ movie.name }}</div>
+                      <div class="text-muted-sm-mt1">
+                        {{ $t('ourMovies.release', { date: formatDate(movie.realReleaseDate ?? movie.scheduledRelease) }) }}
+                        <span v-if="calculator.isOurMovieReleased(movie)" class="our-movies__released">{{ $t('ourMovies.released') }}</span>
+                        <span v-else class="ml-2">{{ $t('ourMovies.stage', { n: movie.currentStage }) }}</span>
+                      </div>
+                      <div v-if="movie.genreIdsAndFractions?.length" class="our-movies__chips">
+                        <span
+                          v-for="g in movie.genreIdsAndFractions"
+                          :key="g.Item1"
+                          class="chip-sm-inline"
+                          :class="getTagCategoryClasses('Genre', g.Item1)"
+                        >
+                          {{ tagName(g.Item1) }}{{ g.Item2 ? ' ' + g.Item2 : '' }}
+                        </span>
+                      </div>
+                      <div v-if="movie.settingIds?.length" class="our-movies__chips our-movies__chips--mt1">
+                        <span
+                          v-for="sid in movie.settingIds"
+                          :key="sid"
+                          class="chip-sm-inline"
+                          :class="getTagCategoryClasses(tagCategory(sid))"
+                        >
+                          {{ tagName(sid) }}
+                        </span>
+                      </div>
+                      <div v-if="movie.contentIds?.length" class="our-movies__chips">
+                        <span
+                          v-for="cid in movie.contentIds.slice(0, 6)"
+                          :key="cid"
+                          class="chip-sm-inline"
+                          :class="getTagCategoryClasses(tagCategory(cid))"
+                        >
+                          {{ tagName(cid) }}
+                        </span>
+                        <span v-if="movie.contentIds.length > 6" class="our-movies__more-label">+{{ movie.contentIds.length - 6 }}</span>
+                      </div>
+                      <div v-if="movie.franchiseId >= 0 || movie.prequelId >= 0 || movie.sequelId >= 0" class="our-movies__meta">
+                        <span v-if="movie.franchiseId >= 0">{{ $t('ourMovies.franchise', { id: movie.franchiseId }) }}</span>
+                        <span v-if="movie.prequelId >= 0"> · {{ $t('ourMovies.prequel', { id: movie.prequelId }) }}</span>
+                        <span v-if="movie.sequelId >= 0"> · {{ $t('ourMovies.sequel', { id: movie.sequelId }) }}</span>
+                      </div>
+                      <div v-if="movie.nominations?.length || movie.polluxes?.length || movie.topBO || movie.topCrit || movie.topAud" class="our-movies__meta-accent">
+                        <span v-if="movie.nominations?.length">{{ $t('ourMovies.nominations', { n: movie.nominations.length }) }}</span>
+                        <span v-if="movie.polluxes?.length"> · {{ $t('ourMovies.pollux', { n: movie.polluxes.length }) }}</span>
+                        <span v-if="movie.topBO || movie.topCrit || movie.topAud"> · {{ $t('ourMovies.achievements', { bo: movie.topBO, crit: movie.topCrit, aud: movie.topAud }) }}</span>
+                      </div>
+                    </div>
 
-              <div class="our-movies__actions-col">
-                <template v-if="linkedScript(movie)">
-                  <div class="our-movies__script-label">{{ $t('ourMovies.linkedScript', { name: linkedScript(movie)!.name || '' }) }}</div>
-                  <div class="flex-gap-1">
-                    <button
-                      type="button"
-                      class="btn-accent-outline-sm"
-                      @click="linkingMovieId = linkingMovieId === movie.id ? null : movie.id"
-                    >
-                      {{ $t('ourMovies.change') }}
-                    </button>
-                    <button
-                      type="button"
-                      class="btn-danger-ghost-sm"
-                      @click="unlink(movie.id)"
-                    >
-                      {{ $t('ourMovies.unlink') }}
-                    </button>
-                  </div>
-                </template>
-                <template v-else>
-                  <button
-                    type="button"
-                    class="btn-accent-outline-xs"
-                    @click="linkingMovieId = linkingMovieId === movie.id ? null : movie.id"
-                  >
-                    {{ $t('ourMovies.linkToScript') }}
-                  </button>
-                </template>
+                    <div class="our-movies__actions-col">
+                      <template v-if="linkedScript(movie)">
+                        <div class="our-movies__script-label">{{ $t('ourMovies.linkedScript', { name: linkedScript(movie)!.name || '' }) }}</div>
+                        <div class="flex-gap-1">
+                          <button
+                            type="button"
+                            class="btn-accent-outline-sm"
+                            @click="linkingMovieId = linkingMovieId === movie.id ? null : movie.id"
+                          >
+                            {{ $t('ourMovies.change') }}
+                          </button>
+                          <button
+                            type="button"
+                            class="btn-danger-ghost-sm"
+                            @click="unlink(movie.id)"
+                          >
+                            {{ $t('ourMovies.unlink') }}
+                          </button>
+                        </div>
+                      </template>
+                      <template v-else>
+                        <button
+                          type="button"
+                          class="btn-accent-outline-xs"
+                          @click="linkingMovieId = linkingMovieId === movie.id ? null : movie.id"
+                        >
+                          {{ $t('ourMovies.linkToScript') }}
+                        </button>
+                      </template>
 
-                <div v-if="linkingMovieId === movie.id" class="our-movies__picker">
-                  <button
-                    type="button"
-                    class="btn-accent-outline-full"
-                    @click="createFromSaveAndLink(movie)"
-                  >
-                    {{ $t('ourMovies.createAndLink') }}
-                  </button>
-                  <div>
-                    <div class="our-movies__hint">{{ $t('ourMovies.chooseExisting') }}</div>
-                    <div class="space-y-0.5">
-                      <button
-                        v-for="script in pinnedScriptsForLink"
-                        :key="script.uniqueId"
-                        type="button"
-                        class="our-movies__script-link"
-                        @click="setLink(movie.id, script.uniqueId)"
-                      >
-                        {{ $t('ourMovies.scriptItem', { name: script.name || '', score: script.stats.movieScore }) }}
-                      </button>
-                      <p v-if="pinnedScriptsForLink.length === 0" class="text-muted-xs">{{ $t('ourMovies.noUnlinked') }}</p>
+                      <div v-if="linkingMovieId === movie.id" class="our-movies__picker">
+                        <button
+                          type="button"
+                          class="btn-accent-outline-full"
+                          @click="createFromSaveAndLink(movie)"
+                        >
+                          {{ $t('ourMovies.createAndLink') }}
+                        </button>
+                        <div>
+                          <div class="our-movies__hint">{{ $t('ourMovies.chooseExisting') }}</div>
+                          <div class="space-y-0.5">
+                            <button
+                              v-for="script in pinnedScriptsForLink"
+                              :key="script.uniqueId"
+                              type="button"
+                              class="our-movies__script-link"
+                              @click="setLink(movie.id, script.uniqueId)"
+                            >
+                              {{ $t('ourMovies.scriptItem', { name: script.name || '', score: script.stats.movieScore }) }}
+                            </button>
+                            <p v-if="pinnedScriptsForLink.length === 0" class="text-muted-xs">{{ $t('ourMovies.noUnlinked') }}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </template>
+
+        <!-- Other tabs: flat list -->
+        <template v-else>
+          <template v-if="filteredMovies.length === 0">
+            <p class="our-movies__empty-msg">
+              {{ activeTab === 'imported' ? $t('ourMovies.emptyImported') : $t('ourMovies.emptyUnprocessed') }}
+            </p>
+          </template>
+
+          <div v-else class="space-y-3">
+            <div
+              v-for="movie in filteredMovies"
+              :key="movie.id"
+              class="our-movies__card"
+            >
+              <div class="our-movies__movie-row">
+                <div class="min-w-0-flex-1">
+                  <div class="our-movies__movie-name">{{ movie.name }}</div>
+                  <div class="text-muted-sm-mt1">
+                    {{ $t('ourMovies.release', { date: formatDate(movie.realReleaseDate ?? movie.scheduledRelease) }) }}
+                    <span v-if="calculator.isOurMovieReleased(movie)" class="our-movies__released">{{ $t('ourMovies.released') }}</span>
+                    <span v-else class="ml-2">{{ $t('ourMovies.stage', { n: movie.currentStage }) }}</span>
+                  </div>
+                  <div v-if="movie.genreIdsAndFractions?.length" class="our-movies__chips">
+                    <span
+                      v-for="g in movie.genreIdsAndFractions"
+                      :key="g.Item1"
+                      class="chip-sm-inline"
+                      :class="getTagCategoryClasses('Genre', g.Item1)"
+                    >
+                      {{ tagName(g.Item1) }}{{ g.Item2 ? ' ' + g.Item2 : '' }}
+                    </span>
+                  </div>
+                  <div v-if="movie.settingIds?.length" class="our-movies__chips our-movies__chips--mt1">
+                    <span
+                      v-for="sid in movie.settingIds"
+                      :key="sid"
+                      class="chip-sm-inline"
+                      :class="getTagCategoryClasses(tagCategory(sid))"
+                    >
+                      {{ tagName(sid) }}
+                    </span>
+                  </div>
+                  <div v-if="movie.contentIds?.length" class="our-movies__chips">
+                    <span
+                      v-for="cid in movie.contentIds.slice(0, 6)"
+                      :key="cid"
+                      class="chip-sm-inline"
+                      :class="getTagCategoryClasses(tagCategory(cid))"
+                    >
+                      {{ tagName(cid) }}
+                    </span>
+                    <span v-if="movie.contentIds.length > 6" class="our-movies__more-label">+{{ movie.contentIds.length - 6 }}</span>
+                  </div>
+                  <div v-if="movie.franchiseId >= 0 || movie.prequelId >= 0 || movie.sequelId >= 0" class="our-movies__meta">
+                    <span v-if="movie.franchiseId >= 0">{{ $t('ourMovies.franchise', { id: movie.franchiseId }) }}</span>
+                    <span v-if="movie.prequelId >= 0"> · {{ $t('ourMovies.prequel', { id: movie.prequelId }) }}</span>
+                    <span v-if="movie.sequelId >= 0"> · {{ $t('ourMovies.sequel', { id: movie.sequelId }) }}</span>
+                  </div>
+                  <div v-if="movie.nominations?.length || movie.polluxes?.length || movie.topBO || movie.topCrit || movie.topAud" class="our-movies__meta-accent">
+                    <span v-if="movie.nominations?.length">{{ $t('ourMovies.nominations', { n: movie.nominations.length }) }}</span>
+                    <span v-if="movie.polluxes?.length"> · {{ $t('ourMovies.pollux', { n: movie.polluxes.length }) }}</span>
+                    <span v-if="movie.topBO || movie.topCrit || movie.topAud"> · {{ $t('ourMovies.achievements', { bo: movie.topBO, crit: movie.topCrit, aud: movie.topAud }) }}</span>
+                  </div>
+                </div>
+
+                <div class="our-movies__actions-col">
+                  <template v-if="linkedScript(movie)">
+                    <div class="our-movies__script-label">{{ $t('ourMovies.linkedScript', { name: linkedScript(movie)!.name || '' }) }}</div>
+                    <div class="flex-gap-1">
+                      <button
+                        type="button"
+                        class="btn-accent-outline-sm"
+                        @click="linkingMovieId = linkingMovieId === movie.id ? null : movie.id"
+                      >
+                        {{ $t('ourMovies.change') }}
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-danger-ghost-sm"
+                        @click="unlink(movie.id)"
+                      >
+                        {{ $t('ourMovies.unlink') }}
+                      </button>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <button
+                      type="button"
+                      class="btn-accent-outline-xs"
+                      @click="linkingMovieId = linkingMovieId === movie.id ? null : movie.id"
+                    >
+                      {{ $t('ourMovies.linkToScript') }}
+                    </button>
+                  </template>
+
+                  <div v-if="linkingMovieId === movie.id" class="our-movies__picker">
+                    <button
+                      type="button"
+                      class="btn-accent-outline-full"
+                      @click="createFromSaveAndLink(movie)"
+                    >
+                      {{ $t('ourMovies.createAndLink') }}
+                    </button>
+                    <div>
+                      <div class="our-movies__hint">{{ $t('ourMovies.chooseExisting') }}</div>
+                      <div class="space-y-0.5">
+                        <button
+                          v-for="script in pinnedScriptsForLink"
+                          :key="script.uniqueId"
+                          type="button"
+                          class="our-movies__script-link"
+                          @click="setLink(movie.id, script.uniqueId)"
+                        >
+                          {{ $t('ourMovies.scriptItem', { name: script.name || '', score: script.stats.movieScore }) }}
+                        </button>
+                        <p v-if="pinnedScriptsForLink.length === 0" class="text-muted-xs">{{ $t('ourMovies.noUnlinked') }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
       </template>
     </div>
   </Modal>

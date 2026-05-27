@@ -201,6 +201,9 @@
   "ourMovies.tabUnprocessed": "未処理",
   "ourMovies.emptyImported": "インポートされた映画はありません。",
   "ourMovies.emptyUnprocessed": "すべての映画は既にインポートされています。",
+  "ourMovies.tabStage": "ステージ別",
+  "ourMovies.tabStageReleased": "公開済み",
+  "ourMovies.tabStageLabel": "ステージ{n}",
 
   "generator.title": "生成設定",
   "generator.lockedElements": "ロックされた要素",

@@ -201,6 +201,9 @@
   "ourMovies.tabUnprocessed": "Non traités",
   "ourMovies.emptyImported": "Aucun film importé.",
   "ourMovies.emptyUnprocessed": "Tous les films déjà importés.",
+  "ourMovies.tabStage": "Par étape",
+  "ourMovies.tabStageReleased": "Sortis",
+  "ourMovies.tabStageLabel": "Étape {n}",
 
   "generator.title": "Paramètres du générateur",
   "generator.lockedElements": "Éléments verrouillés",

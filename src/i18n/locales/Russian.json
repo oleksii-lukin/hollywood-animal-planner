@@ -201,6 +201,9 @@
   "ourMovies.tabUnprocessed": "Необработанные",
   "ourMovies.emptyImported": "Нет импортированных фильмов.",
   "ourMovies.emptyUnprocessed": "Все фильмы уже импортированы.",
+  "ourMovies.tabStage": "По этапам",
+  "ourMovies.tabStageReleased": "Выпущенные",
+  "ourMovies.tabStageLabel": "Этап {n}",
 
   "generator.title": "Настройки генератора",
   "generator.lockedElements": "Заблокированные элементы",
