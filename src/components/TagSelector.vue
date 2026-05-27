@@ -175,12 +175,20 @@ function getAvailableTags(category: TagCategory) {
   const categoryTags = gameData.tagsByCategory[category] || []
   const selectedIds = new Set(selectedTags.value.map(t => t.id))
   
+  const counterpartIds = new Set(
+    props.context === 'generator'
+      ? calculator.generatorExcludedTags.map(t => t.id)
+      : props.context === 'excluded'
+        ? calculator.generatorLockedTags.map(t => t.id)
+        : []
+  )
+  
   if (calculator.saveFileData && props.context !== 'excluded') {
     const availableSet = new Set(calculator.availableTagsFromSave)
-    return categoryTags.filter(t => availableSet.has(t.id) && !selectedIds.has(t.id))
+    return categoryTags.filter(t => availableSet.has(t.id) && !selectedIds.has(t.id) && !counterpartIds.has(t.id))
   }
   
-  return categoryTags.filter(t => !selectedIds.has(t.id))
+  return categoryTags.filter(t => !selectedIds.has(t.id) && !counterpartIds.has(t.id))
 }
 
 function isCodexTag(tagId: string): boolean {

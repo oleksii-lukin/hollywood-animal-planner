@@ -73,6 +73,11 @@ export const useCalculatorStore = defineStore('calculator', () => {
     if (!list.value.some(t => t.id === tag.id)) {
       list.value.push(tag)
     }
+    if (context === 'excluded') {
+      removeTag('generator', tag.id)
+    } else if (context === 'generator') {
+      removeTag('excluded', tag.id)
+    }
   }
 
   function removeTag(context: 'synergy' | 'advertisers' | 'generator' | 'excluded', tagId: string) {
@@ -562,6 +567,8 @@ export const useCalculatorStore = defineStore('calculator', () => {
     activePresetId.value = presetId
     generatorLockedTags.value = preset.lockedTags.map(t => ({ ...t }))
     generatorExcludedTags.value = preset.excludedTags.map(t => ({ ...t }))
+    const excludedIds = new Set(generatorExcludedTags.value.map(t => t.id))
+    generatorLockedTags.value = generatorLockedTags.value.filter(t => !excludedIds.has(t.id))
   }
 
   function saveCurrentAsTagPreset(name: string) {
