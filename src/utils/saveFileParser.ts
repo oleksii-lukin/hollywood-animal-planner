@@ -17,6 +17,7 @@ interface StateJson {
   saveMeta?: {
     timestamp?: string
   }
+  timePassed?: string
 }
 
 /** Ensures the parsed object looks like a Hollywood Animal save, not random JSON. */
@@ -110,6 +111,19 @@ export function parseSaveFile(fileContent: string): ParsedSaveData {
     gameDate = stateJson.saveMeta.timestamp
   }
 
+  const timePassed = typeof stateJson.timePassed === 'string' ? stateJson.timePassed : undefined
+  let currentGameDate: string | undefined
+  if (timePassed) {
+    const daysMatch = timePassed.match(/^(\d+)/)
+    if (daysMatch) {
+      const days = parseInt(daysMatch[1], 10)
+      const start = new Date('1929-01-02T00:00:00')
+      start.setUTCDate(start.getUTCDate() + days)
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      currentGameDate = `${months[start.getUTCMonth()]} ${start.getUTCDate()}, ${start.getUTCFullYear()}`
+    }
+  }
+
   const secretsInfo = extractSaveSecrets(stateJson as Record<string, unknown>)
   const ourMovies = extractOurMovies(stateJson as Record<string, unknown>)
 
@@ -119,6 +133,8 @@ export function parseSaveFile(fileContent: string): ParsedSaveData {
     usedTags,
     codexTags,
     gameDate,
+    ...(timePassed && { timePassed }),
+    ...(currentGameDate && { currentGameDate }),
     ...(secretsInfo && { secretsInfo }),
     ...(ourMovies.length > 0 && { ourMovies })
   }

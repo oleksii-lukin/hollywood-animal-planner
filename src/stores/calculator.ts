@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch, type Ref } from 'vue'
-import type { TagInput, TagPreset, GeneratedScript, SavedScript, ParsedSaveData, SaveHistoryEntry, GenerationHistoryEntry, ReleasePlanSettings, PlanSlotEntry, ReleasePlanHistoryEntry, GameMovie } from '@/types/game'
+import type { TagInput, TagPreset, GeneratedScript, SavedScript, ParsedSaveData, SaveHistoryEntry, GenerationHistoryEntry, ReleasePlanSettings, PlanSlotEntry, ReleasePlanHistoryEntry, GameMovie, StaleTagStageFilters } from '@/types/game'
+import { useGameDataStore } from '@/stores/gameData'
 
 const RELEASED_IDS_KEY = 'hollywood-animal-planner-released-ids'
 /** Set in setup so afterRestore can restore into the same ref (ctx.store may not expose it yet). */
@@ -11,6 +12,9 @@ export const useCalculatorStore = defineStore('calculator', () => {
   const advertiserTags = ref<TagInput[]>([])
   const generatorLockedTags = ref<TagInput[]>([])
   const generatorExcludedTags = ref<TagInput[]>([])
+  const generatorStaleTags = ref<TagInput[]>([])
+  const staleTagsEnabled = ref(false)
+  const staleTagStageFilters = ref<StaleTagStageFilters>({ stage1: false, stage2: false, stage3: false, stage4: true })
   
   const commercialScore = ref(5.0)
   const artisticScore = ref(5.0)
@@ -64,11 +68,19 @@ export const useCalculatorStore = defineStore('calculator', () => {
     { deep: true }
   )
 
+  watch(
+    [staleTagStageFilters, staleTagsEnabled],
+    () => {
+      computeStaleTags()
+    },
+    { deep: true }
+  )
+
   const availableTagsFromSave = computed(() => saveFileData.value?.availableTags ?? [])
   const codexTagsFromSave = computed(() => saveFileData.value?.codexTags ?? [])
   const hasSaveLoaded = computed(() => saveFileData.value !== null)
 
-  function addTag(context: 'synergy' | 'advertisers' | 'generator' | 'excluded', tag: TagInput) {
+  function addTag(context: 'synergy' | 'advertisers' | 'generator' | 'excluded' | 'stale', tag: TagInput) {
     const list = getTagList(context)
     if (!list.value.some(t => t.id === tag.id)) {
       list.value.push(tag)
@@ -77,10 +89,15 @@ export const useCalculatorStore = defineStore('calculator', () => {
       removeTag('generator', tag.id)
     } else if (context === 'generator') {
       removeTag('excluded', tag.id)
+      if (staleTagsEnabled.value) {
+        removeTag('stale', tag.id)
+      }
+    } else if (context === 'stale') {
+      removeTag('generator', tag.id)
     }
   }
 
-  function removeTag(context: 'synergy' | 'advertisers' | 'generator' | 'excluded', tagId: string) {
+  function removeTag(context: 'synergy' | 'advertisers' | 'generator' | 'excluded' | 'stale', tagId: string) {
     const list = getTagList(context)
     const idx = list.value.findIndex(t => t.id === tagId)
     if (idx !== -1) {
@@ -88,7 +105,7 @@ export const useCalculatorStore = defineStore('calculator', () => {
     }
   }
 
-  function updateTagPercent(context: 'synergy' | 'advertisers' | 'generator' | 'excluded', tagId: string, percent: number) {
+  function updateTagPercent(context: 'synergy' | 'advertisers' | 'generator' | 'excluded' | 'stale', tagId: string, percent: number) {
     const list = getTagList(context)
     const tag = list.value.find(t => t.id === tagId)
     if (tag) {
@@ -96,17 +113,78 @@ export const useCalculatorStore = defineStore('calculator', () => {
     }
   }
 
-  function clearTags(context: 'synergy' | 'advertisers' | 'generator' | 'excluded') {
+  function clearTags(context: 'synergy' | 'advertisers' | 'generator' | 'excluded' | 'stale') {
     const list = getTagList(context)
     list.value = []
   }
 
-  function getTagList(context: 'synergy' | 'advertisers' | 'generator' | 'excluded') {
+  function getTagList(context: 'synergy' | 'advertisers' | 'generator' | 'excluded' | 'stale') {
     switch (context) {
       case 'synergy': return synergyTags
       case 'advertisers': return advertiserTags
       case 'generator': return generatorLockedTags
       case 'excluded': return generatorExcludedTags
+      case 'stale': return generatorStaleTags
+    }
+  }
+
+  function parseTimePassedDays(timePassed: string): number {
+    const match = timePassed.match(/^(\d+)\.(\d{2}):(\d{2}):(\d{2})$/)
+    if (!match) return 0
+    const days = parseInt(match[1], 10)
+    const hours = parseInt(match[2], 10)
+    const minutes = parseInt(match[3], 10)
+    const seconds = parseInt(match[4], 10)
+    return days + hours / 24 + minutes / 1440 + seconds / 86400
+  }
+
+  function computeStaleTags() {
+    const gameData = useGameDataStore()
+    const saveData = saveFileData.value
+    if (!saveData?.timePassed || !saveData?.ourMovies?.length) {
+      generatorStaleTags.value = []
+      return
+    }
+    const totalDays = parseTimePassedDays(saveData.timePassed)
+    const currentDate = new Date('1929-01-02T00:00:00')
+    currentDate.setUTCDate(currentDate.getUTCDate() + Math.floor(totalDays))
+    const cutoffDate = new Date(currentDate)
+    cutoffDate.setUTCDate(cutoffDate.getUTCDate() - 500)
+
+    const allowedStages = new Set([5])
+    const filters = staleTagStageFilters.value
+    if (filters.stage1) allowedStages.add(1)
+    if (filters.stage2) allowedStages.add(2)
+    if (filters.stage3) allowedStages.add(3)
+    if (filters.stage4) allowedStages.add(4)
+
+    const tagCount = new Map<string, number>()
+    for (const movie of saveData.ourMovies) {
+      if (!allowedStages.has(movie.currentStage)) continue
+      if (movie.currentStage === 5) {
+        if (!movie.realReleaseDate) continue
+        const releaseDate = new Date(movie.realReleaseDate)
+        if (releaseDate < cutoffDate || releaseDate > currentDate) continue
+      }
+      for (const id of movie.contentIds) {
+        tagCount.set(id, (tagCount.get(id) ?? 0) + 1)
+      }
+    }
+
+    const staleTags: TagInput[] = []
+    for (const [id, count] of tagCount) {
+      if (count >= 3) {
+        const tag = gameData.tags[id]
+        staleTags.push({ id, percent: 1, category: tag?.category ?? 'Protagonist' })
+      }
+    }
+
+    generatorStaleTags.value = staleTags
+
+    if (staleTagsEnabled.value) {
+      for (const t of staleTags) {
+        removeTag('generator', t.id)
+      }
     }
   }
 
@@ -354,6 +432,7 @@ export const useCalculatorStore = defineStore('calculator', () => {
       saveHistory.value = saveHistory.value.slice(0, 10)
     }
     autoLinkOurMovies()
+    computeStaleTags()
   }
 
   function loadFromHistory(historyId: string) {
@@ -361,6 +440,7 @@ export const useCalculatorStore = defineStore('calculator', () => {
     if (entry) {
       saveFileData.value = { ...entry.data }
       autoLinkOurMovies()
+      computeStaleTags()
     }
   }
 
@@ -646,6 +726,9 @@ export const useCalculatorStore = defineStore('calculator', () => {
     advertiserTags,
     generatorLockedTags,
     generatorExcludedTags,
+    generatorStaleTags,
+    staleTagsEnabled,
+    staleTagStageFilters,
     commercialScore,
     artisticScore,
     targetCompatibility,
@@ -691,6 +774,7 @@ export const useCalculatorStore = defineStore('calculator', () => {
     setPlanSlotFromBoard,
     linkPlanSlotToPinned,
     getTagsUsedInOtherSlots,
+    computeStaleTags,
     isScriptInPlan,
     markPlanSlotReleased,
     unmarkPlanSlotReleased,
@@ -743,7 +827,9 @@ export const useCalculatorStore = defineStore('calculator', () => {
       'releasePlanHistory',
       'gameMovieLinks',
       'releasedOurMovieIds',
-      'archivedBacklogIds'
+      'archivedBacklogIds',
+      'staleTagStageFilters',
+      'staleTagsEnabled'
     ],
     afterRestore: (ctx) => {
       try {
@@ -753,7 +839,7 @@ export const useCalculatorStore = defineStore('calculator', () => {
           if (Array.isArray(ids)) releasedPinnedScriptIdsRef.value = ids as string[]
         }
       } catch (_) { /* ignore */ }
-      const store = ctx.store as unknown as { pinnedScripts: SavedScript[]; releasePlanSlots: (PlanSlotEntry | null)[]; releasedPinnedScriptIds?: { value?: string[] } }
+      const store = ctx.store as unknown as { pinnedScripts: SavedScript[]; releasePlanSlots: (PlanSlotEntry | null)[]; releasedPinnedScriptIds?: { value?: string[] }; computeStaleTags?: () => void }
       const r = store.releasedPinnedScriptIds
       if (r && !Array.isArray(r.value)) r.value = []
       const raw = store.pinnedScripts
@@ -774,6 +860,7 @@ export const useCalculatorStore = defineStore('calculator', () => {
       if (!Array.isArray(store.releasePlanSlots) || store.releasePlanSlots.length < 1) {
         store.releasePlanSlots = Array(9).fill(null)
       }
+      store.computeStaleTags?.()
     }
   }
 })

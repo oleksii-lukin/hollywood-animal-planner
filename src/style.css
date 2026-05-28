@@ -1426,6 +1426,18 @@
   .generator__icon-btn-danger {
     @apply shrink-0 w-4 h-4 flex items-center justify-center rounded transition-colors;
   }
+  .generator__stage-filters {
+    @apply flex flex-col gap-1.5;
+  }
+  .generator__stage-checkbox {
+    @apply flex items-center gap-2 cursor-pointer text-sm;
+  }
+  .generator__stage-checkbox--disabled {
+    @apply opacity-60 cursor-default;
+  }
+  .generator__stage-label {
+    @apply text-sm text-text-muted;
+  }
 
   /* ========== Our movies modal ========== */
   .our-movies__chips {

@@ -105,6 +105,7 @@
   "plan.boardLink": "看板",
   "plan.uniqueness": "唯一性",
   "plan.allowTagRepetition": "允许计划中标签重复",
+  "plan.uniquenessHelp": "关闭标签重复时，生成器会避免在计划中重复使用标签。唯一性越高 = 重复标签越少。",
   "plan.level": "级别：",
   "plan.level.low": "低（无额外排除）",
   "plan.level.medium": "中（避免标签出现在2个以上其他电影中）",
@@ -267,6 +268,16 @@
   "generator.targetPrefix": "目标：",
   "generator.comp": "comp",
   "generator.score": "score",
-  "generator.separator": "•"
+  "generator.separator": "•",
 
+  "generator.staleTags": "过时标签",
+  "generator.excludeStale": "排除过时",
+  "generator.recalculate": "重新计算",
+  "generator.includeStages": "包含阶段：",
+  "generator.stagePreProduction": "前期制作",
+  "generator.stageProduction": "制作",
+  "generator.stagePostProduction": "后期制作",
+  "generator.stagePlannedRelease": "计划发布",
+  "generator.stageReleased": "已发布",
+  "generator.noStaleTags": "未找到当前过滤器的过时标签。"
 }

@@ -105,6 +105,7 @@
   "plan.boardLink": "Доске",
   "plan.uniqueness": "Уникальность",
   "plan.allowTagRepetition": "Разрешить повторение тегов в плане",
+  "plan.uniquenessHelp": "Когда повтор отключен, генератор избегает повторного использования тегов в плане. Выше уникальность = меньше повторяющихся тегов.",
   "plan.level": "Уровень:",
   "plan.level.low": "Низкий (без доп. исключений)",
   "plan.level.medium": "Средний (избегать теги в 2+ других фильмах)",
@@ -267,6 +268,16 @@
   "generator.targetPrefix": "Цель:",
   "generator.comp": "comp",
   "generator.score": "score",
-  "generator.separator": "•"
+  "generator.separator": "•",
 
+  "generator.staleTags": "Устаревшие теги",
+  "generator.excludeStale": "Исключить устаревшие",
+  "generator.recalculate": "Пересчитать",
+  "generator.includeStages": "Включить этапы:",
+  "generator.stagePreProduction": "Пре-продакшн",
+  "generator.stageProduction": "Производство",
+  "generator.stagePostProduction": "Пост-продакшн",
+  "generator.stagePlannedRelease": "Запланированный релиз",
+  "generator.stageReleased": "Выпущен",
+  "generator.noStaleTags": "Устаревшие теги не найдены для текущих фильтров."
 }

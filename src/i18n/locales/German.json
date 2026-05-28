@@ -105,6 +105,7 @@
   "plan.boardLink": "Tafel",
   "plan.uniqueness": "Einzigartigkeit",
   "plan.allowTagRepetition": "Tag-Wiederholung im Plan erlauben",
+  "plan.uniquenessHelp": "Bei deaktivierter Wiederholung vermeidet der Generator die Wiederverwendung von Tags im Plan. Höhere Eindeutigkeit = weniger wiederholte Tags.",
   "plan.level": "Stufe:",
   "plan.level.low": "Niedrig (keine zusätzliche Ausschließung)",
   "plan.level.medium": "Mittel (Tags in 2+ anderen Filmen vermeiden)",
@@ -267,6 +268,16 @@
   "generator.targetPrefix": "Ziel:",
   "generator.comp": "comp",
   "generator.score": "score",
-  "generator.separator": "•"
+  "generator.separator": "•",
 
+  "generator.staleTags": "Veraltete Tags",
+  "generator.excludeStale": "Veraltete ausschließen",
+  "generator.recalculate": "Neu berechnen",
+  "generator.includeStages": "Phasen einschließen:",
+  "generator.stagePreProduction": "Vorproduktion",
+  "generator.stageProduction": "Produktion",
+  "generator.stagePostProduction": "Postproduktion",
+  "generator.stagePlannedRelease": "Geplante Veröffentlichung",
+  "generator.stageReleased": "Veröffentlicht",
+  "generator.noStaleTags": "Keine veralteten Tags für die aktuellen Filter gefunden."
 }

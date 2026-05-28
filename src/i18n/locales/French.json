@@ -267,6 +267,16 @@
   "generator.targetPrefix": "Cible :",
   "generator.comp": "comp",
   "generator.score": "score",
-  "generator.separator": "•"
+  "generator.separator": "•",
 
+  "generator.staleTags": "Étiquettes obsolètes",
+  "generator.excludeStale": "Exclure obsolètes",
+  "generator.recalculate": "Recalculer",
+  "generator.includeStages": "Inclure les étapes :",
+  "generator.stagePreProduction": "Pré-production",
+  "generator.stageProduction": "Production",
+  "generator.stagePostProduction": "Post-production",
+  "generator.stagePlannedRelease": "Sortie prévue",
+  "generator.stageReleased": "Sorti",
+  "generator.noStaleTags": "Aucune étiquette obsolète trouvée pour les filtres actuels."
 }

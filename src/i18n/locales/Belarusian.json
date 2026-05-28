@@ -105,6 +105,7 @@
   "plan.boardLink": "Дошцы",
   "plan.uniqueness": "Унікальнасць",
   "plan.allowTagRepetition": "Дазволіць паўтарэнне тэгаў у плане",
+  "plan.uniquenessHelp": "Калі паўтор адключаны, генератар пазбягае паўторнага выкарыстання тэгаў у плане. Вышэйшая ўнікальнасць = менш паўтаральных тэгаў.",
   "plan.level": "Узровень:",
   "plan.level.low": "Нізкі (без дадатковых выключэнняў)",
   "plan.level.medium": "Сярэдні (пазбягаць тэгі ў 2+ іншых фільмах)",
@@ -267,6 +268,16 @@
   "generator.targetPrefix": "Мэта:",
   "generator.comp": "comp",
   "generator.score": "score",
-  "generator.separator": "•"
+  "generator.separator": "•",
 
+  "generator.staleTags": "Састарэлыя тэгі",
+  "generator.excludeStale": "Выключыць састарэлыя",
+  "generator.recalculate": "Пералічыць",
+  "generator.includeStages": "Уключыць этапы:",
+  "generator.stagePreProduction": "Прэ-прадакшн",
+  "generator.stageProduction": "Вытворчасць",
+  "generator.stagePostProduction": "Пост-прадакшн",
+  "generator.stagePlannedRelease": "Запланаваны рэліз",
+  "generator.stageReleased": "Выпушчаны",
+  "generator.noStaleTags": "Састарэлых тэгаў не знойдзена для бягучых фільтраў."
 }

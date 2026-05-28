@@ -182,13 +182,19 @@ function getAvailableTags(category: TagCategory) {
         ? calculator.generatorLockedTags.map(t => t.id)
         : []
   )
-  
+
+  const staleIds = new Set(
+    props.context === 'generator' || props.context === 'excluded'
+      ? calculator.generatorStaleTags.map(t => t.id)
+      : []
+  )
+
   if (calculator.saveFileData && props.context !== 'excluded') {
     const availableSet = new Set(calculator.availableTagsFromSave)
-    return categoryTags.filter(t => availableSet.has(t.id) && !selectedIds.has(t.id) && !counterpartIds.has(t.id))
+    return categoryTags.filter(t => availableSet.has(t.id) && !selectedIds.has(t.id) && !counterpartIds.has(t.id) && !staleIds.has(t.id))
   }
-  
-  return categoryTags.filter(t => !selectedIds.has(t.id) && !counterpartIds.has(t.id))
+
+  return categoryTags.filter(t => !selectedIds.has(t.id) && !counterpartIds.has(t.id) && !staleIds.has(t.id))
 }
 
 function isCodexTag(tagId: string): boolean {

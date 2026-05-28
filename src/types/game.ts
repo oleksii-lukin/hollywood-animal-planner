@@ -52,6 +52,13 @@ export interface TagPreset {
   excludedTags: TagInput[]
 }
 
+export interface StaleTagStageFilters {
+  stage1: boolean
+  stage2: boolean
+  stage3: boolean
+  stage4: boolean
+}
+
 export interface GeneratedScript {
   uniqueId: string
   name: string
@@ -172,6 +179,10 @@ export interface ParsedSaveData {
   secretsInfo?: SaveSecretsInfo
   /** Our studio's movies from the save (state.movies). */
   ourMovies?: GameMovie[]
+  /** Raw timePassed string from stateJson (e.g. "917.00:00:00") */
+  timePassed?: string
+  /** Formatted current game date calculated from timePassed */
+  currentGameDate?: string
 }
 
 export interface SaveHistoryEntry {

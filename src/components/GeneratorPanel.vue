@@ -24,7 +24,33 @@ const generationProgress = ref<{ current: number; total: number; iteration: numb
 const settingsCollapsed = ref(false)
 const lockedCollapsed = ref(false)
 const excludedCollapsed = ref(true)
+const staleCollapsed = ref(true)
 const historyCollapsed = ref(true)
+
+const staleByCategory = computed(() => {
+  const result: Record<string, TagInput[]> = {}
+  for (const cat of gameData.categories) {
+    result[cat] = []
+  }
+  for (const tag of calculator.generatorStaleTags) {
+    if (result[tag.category]) {
+      result[tag.category].push(tag)
+    }
+  }
+  return result
+})
+
+function recalculateStaleTags() {
+  calculator.computeStaleTags()
+}
+
+function staleStageRef(s: number, val?: boolean) {
+  const key = `stage${s}` as 'stage1' | 'stage2' | 'stage3' | 'stage4'
+  if (val !== undefined) {
+    calculator.staleTagStageFilters[key] = val
+  }
+  return calculator.staleTagStageFilters[key]
+}
 
 onMounted(() => {
   if (calculator.generatedScripts.length > 0) showResults.value = true
@@ -117,7 +143,8 @@ function populateExcludedForStarting() {
 
 async function generateScripts() {
   const fixedTags = calculator.generatorLockedTags
-  const excludedTags = calculator.generatorExcludedTags
+  const staleMerge = calculator.staleTagsEnabled ? calculator.generatorStaleTags : []
+  const excludedTags = [...calculator.generatorExcludedTags, ...staleMerge]
   const scoringFixed = fixedTags.filter((t: TagInput) => t.category !== 'Genre' && t.category !== 'Setting')
   if (scoringFixed.length > targetTagCount.value) {
     alert(t('generator.tooManyLockedElements', { n: scoringFixed.length, target: targetTagCount.value }))
@@ -402,6 +429,68 @@ function loadHistoryEntry(historyId: string) {
       </CardHeader>
       <div v-show="!excludedCollapsed">
         <TagSelector context="excluded" />
+      </div>
+      <div class="divider"></div>
+      <CardHeader :title="t('generator.staleTags')" color="warning" collapsible v-model:collapsed="staleCollapsed">
+        <template #actions>
+          <label class="generator__toggle-label" @click.stop>
+            <input type="checkbox" v-model="calculator.staleTagsEnabled" />
+            {{ t('generator.excludeStale') }}
+          </label>
+          <span v-if="staleCollapsed && calculator.generatorStaleTags.length > 0" class="generator__badge-warning">{{ calculator.generatorStaleTags.length }}</span>
+          <button @click="recalculateStaleTags" class="btn-reset">{{ t('generator.recalculate') }}</button>
+        </template>
+      </CardHeader>
+      <div v-show="!staleCollapsed">
+        <div class="panel-padded-mb3" v-if="calculator.hasSaveLoaded">
+          <label class="label-section">{{ t('generator.includeStages') }}</label>
+          <div class="generator__stage-filters">
+            <label class="generator__stage-checkbox">
+              <input type="checkbox" :checked="staleStageRef(1)" @change="(e) => staleStageRef(1, (e.target as HTMLInputElement).checked)" />
+              {{ t('generator.stagePreProduction') }}
+            </label>
+            <label class="generator__stage-checkbox">
+              <input type="checkbox" :checked="staleStageRef(2)" @change="(e) => staleStageRef(2, (e.target as HTMLInputElement).checked)" />
+              {{ t('generator.stageProduction') }}
+            </label>
+            <label class="generator__stage-checkbox">
+              <input type="checkbox" :checked="staleStageRef(3)" @change="(e) => staleStageRef(3, (e.target as HTMLInputElement).checked)" />
+              {{ t('generator.stagePostProduction') }}
+            </label>
+            <label class="generator__stage-checkbox">
+              <input type="checkbox" :checked="staleStageRef(4)" @change="(e) => staleStageRef(4, (e.target as HTMLInputElement).checked)" />
+              {{ t('generator.stagePlannedRelease') }}
+            </label>
+            <label class="generator__stage-checkbox generator__stage-checkbox--disabled">
+              <input type="checkbox" checked disabled />
+              {{ t('generator.stageReleased') }}
+            </label>
+          </div>
+        </div>
+        <div v-if="calculator.generatorStaleTags.length === 0" class="panel-padded">
+          <p class="text-muted-xs">{{ t('generator.noStaleTags') }}</p>
+        </div>
+        <div v-else class="panel-padded">
+          <div v-for="cat in gameData.categories" :key="cat" class="space-y-1">
+            <div v-if="staleByCategory[cat].length > 0" class="tag-selector__category-panel">
+              <div class="tag-selector__category-header">
+                <span class="tag-selector__category-name">{{ cat }}</span>
+                <span class="tag-selector__category-badge bg-warning/20 text-warning">{{ staleByCategory[cat].length }}</span>
+              </div>
+              <div class="chips-row">
+                <span
+                  v-for="tag in staleByCategory[cat]"
+                  :key="tag.id"
+                  class="chip-sm"
+                  :class="getTagCategoryClasses(tag.category, tag.id)"
+                >
+                  {{ gameData.tags[tag.id]?.name ?? tag.id }}
+                  <button @click="calculator.removeTag('stale', tag.id)" class="tag-selector__remove-btn">×</button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="generator__generate-wrap">
         <Button variant="primary" full-width @click="generateScripts" :disabled="isGenerating">

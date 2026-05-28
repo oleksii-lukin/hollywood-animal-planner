@@ -105,6 +105,7 @@
   "plan.boardLink": "Painel",
   "plan.uniqueness": "Exclusividade",
   "plan.allowTagRepetition": "Permitir repetição de tags no plano",
+  "plan.uniquenessHelp": "Quando a repetição está desativada, o gerador evita reutilizar tags no plano. Maior exclusividade = menos tags repetidas.",
   "plan.level": "Nível:",
   "plan.level.low": "Baixo (sem exclusão extra)",
   "plan.level.medium": "Médio (evitar tags em 2+ outros filmes)",
@@ -267,6 +268,16 @@
   "generator.targetPrefix": "Alvo:",
   "generator.comp": "comp",
   "generator.score": "score",
-  "generator.separator": "•"
+  "generator.separator": "•",
 
+  "generator.staleTags": "Tags obsoletas",
+  "generator.excludeStale": "Excluir obsoletas",
+  "generator.recalculate": "Recalcular",
+  "generator.includeStages": "Incluir estágios:",
+  "generator.stagePreProduction": "Pré-produção",
+  "generator.stageProduction": "Produção",
+  "generator.stagePostProduction": "Pós-produção",
+  "generator.stagePlannedRelease": "Lançamento planeado",
+  "generator.stageReleased": "Lançado",
+  "generator.noStaleTags": "Nenhuma tag obsoleta encontrada para os filtros atuais."
 }

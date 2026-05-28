@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   title: string
-  color?: 'accent' | 'danger' | 'default'
+  color?: 'accent' | 'danger' | 'warning' | 'default'
   collapsible?: boolean
   collapsed?: boolean
 }>()
@@ -24,7 +24,8 @@ function toggle() {
       :class="[
         {
           'text-accent': color === 'accent' || !color,
-          'text-danger': color === 'danger'
+          'text-danger': color === 'danger',
+          'text-warning': color === 'warning'
         },
         collapsible ? 'cursor-pointer select-none hover:opacity-80' : ''
       ]"

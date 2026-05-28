@@ -105,6 +105,7 @@
   "plan.boardLink": "Board",
   "plan.uniqueness": "Uniqueness",
   "plan.allowTagRepetition": "Allow tag repetition across plan",
+  "plan.uniquenessHelp": "When tag repetition is off, the generator avoids reusing tags across the plan. Higher uniqueness = fewer repeated tags.",
   "plan.level": "Level:",
   "plan.level.low": "Low (no extra exclusion)",
   "plan.level.medium": "Medium (avoid tags in 2+ other films)",
@@ -267,5 +268,16 @@
   "generator.targetPrefix": "Target:",
   "generator.comp": "comp",
   "generator.score": "score",
-  "generator.separator": "•"
+  "generator.separator": "•",
+
+  "generator.staleTags": "Stale Tags",
+  "generator.excludeStale": "Exclude stale",
+  "generator.recalculate": "Recalculate",
+  "generator.includeStages": "Include stages:",
+  "generator.stagePreProduction": "Pre Production",
+  "generator.stageProduction": "Production",
+  "generator.stagePostProduction": "Post Production",
+  "generator.stagePlannedRelease": "Planned Release",
+  "generator.stageReleased": "Released",
+  "generator.noStaleTags": "No stale tags found for the current filters."
 }

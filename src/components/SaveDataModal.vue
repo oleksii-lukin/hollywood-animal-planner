@@ -116,6 +116,10 @@ function removeFromHistory(historyId: string) {
                 <span class="text-text-muted">Game:</span>
                 <span class="save-modal__row-value--accent">{{ formatGameDate(currentData.gameDate) }}</span>
               </div>
+              <div v-if="currentData.currentGameDate">
+                <span class="text-text-muted">Calc:</span>
+                <span class="save-modal__row-value">{{ currentData.currentGameDate }}</span>
+              </div>
             </div>
             <button
               v-if="hasSecrets"
