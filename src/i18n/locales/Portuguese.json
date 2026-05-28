@@ -205,6 +205,7 @@
   "ourMovies.tabStage": "Por estágio",
   "ourMovies.tabStageReleased": "Lançados",
   "ourMovies.tabStageLabel": "Estágio {n}",
+  "ourMovies.stage0": "Conceito",
 
   "generator.title": "Definições do gerador",
   "generator.lockedElements": "Elementos bloqueados",

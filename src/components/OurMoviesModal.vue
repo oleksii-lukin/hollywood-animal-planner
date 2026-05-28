@@ -4,7 +4,21 @@ import type { GameMovie, SavedScript, TagInput } from '@/types/game'
 import { useCalculatorStore } from '@/stores/calculator'
 import { useGameDataStore } from '@/stores/gameData'
 import { getTagCategoryClasses } from '@/utils/tagCategoryColors'
+import { useI18n } from 'vue-i18n'
 import Modal from '@/components/ui/Modal.vue'
+
+const { t } = useI18n()
+
+function stageName(stage: number): string {
+  const names: Record<number, string> = {
+    1: t('generator.stagePreProduction'),
+    2: t('generator.stageProduction'),
+    3: t('generator.stagePostProduction'),
+    4: t('generator.stagePlannedRelease'),
+    5: t('generator.stageReleased'),
+  }
+  return names[stage] ?? t('ourMovies.stage0')
+}
 
 const props = defineProps<{
   open: boolean
@@ -194,7 +208,7 @@ function createFromSaveAndLink(movie: GameMovie) {
                 >▼</span>
                 <span class="text-xs font-semibold uppercase text-accent">
                   <template v-if="group.type === 'released'">{{ $t('ourMovies.tabStageReleased') }}</template>
-                  <template v-else>{{ $t('ourMovies.tabStageLabel', { n: group.stage }) }}</template>
+                  <template v-else>{{ stageName(group.stage!) }}</template>
                 </span>
                 <span class="text-muted-xs">({{ group.movies.length }})</span>
               </div>
@@ -210,7 +224,7 @@ function createFromSaveAndLink(movie: GameMovie) {
                       <div class="text-muted-sm-mt1">
                         {{ $t('ourMovies.release', { date: formatDate(movie.realReleaseDate ?? movie.scheduledRelease) }) }}
                         <span v-if="calculator.isOurMovieReleased(movie)" class="our-movies__released">{{ $t('ourMovies.released') }}</span>
-                        <span v-else class="ml-2">{{ $t('ourMovies.stage', { n: movie.currentStage }) }}</span>
+                        <span v-else class="ml-2">{{ stageName(movie.currentStage) }}</span>
                       </div>
                       <div v-if="movie.genreIdsAndFractions?.length" class="our-movies__chips">
                         <span
@@ -337,7 +351,7 @@ function createFromSaveAndLink(movie: GameMovie) {
                   <div class="text-muted-sm-mt1">
                     {{ $t('ourMovies.release', { date: formatDate(movie.realReleaseDate ?? movie.scheduledRelease) }) }}
                     <span v-if="calculator.isOurMovieReleased(movie)" class="our-movies__released">{{ $t('ourMovies.released') }}</span>
-                    <span v-else class="ml-2">{{ $t('ourMovies.stage', { n: movie.currentStage }) }}</span>
+                    <span v-else class="ml-2">{{ stageName(movie.currentStage) }}</span>
                   </div>
                   <div v-if="movie.genreIdsAndFractions?.length" class="our-movies__chips">
                     <span

@@ -205,6 +205,7 @@
   "ourMovies.tabStage": "Por etapa",
   "ourMovies.tabStageReleased": "Lanzadas",
   "ourMovies.tabStageLabel": "Etapa {n}",
+  "ourMovies.stage0": "Concepto",
 
   "generator.title": "Ajustes del generador",
   "generator.lockedElements": "Elementos bloqueados",
