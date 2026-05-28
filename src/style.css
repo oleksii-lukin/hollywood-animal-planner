@@ -1524,6 +1524,9 @@
   .lang-selector__flag-box svg {
     @apply w-full h-full block;
   }
+  .lang-selector__flag-img {
+    @apply w-full h-full object-cover block rounded-sm;
+  }
 
   /* ========== Plan (continued) ========== */
   .plan__settings-panel {
