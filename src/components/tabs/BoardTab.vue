@@ -6,6 +6,7 @@ import { useGameDataStore } from '@/stores/gameData'
 import { calculateAudienceAffinity } from '@/utils/calculator'
 import type { SavedScript, DemographicId } from '@/types/game'
 import { getTagCategoryClasses } from '@/utils/tagCategoryColors'
+import { useTagFreshness } from '@/utils/tagFreshness'
 import { PencilIcon } from '@heroicons/vue/24/outline'
 import Card from '@/components/ui/Card.vue'
 import CardHeader from '@/components/ui/CardHeader.vue'
@@ -30,6 +31,16 @@ function splitTagsByStartAndPlot(tags: SavedScript['tags']) {
 const { t } = useI18n()
 const calculator = useCalculatorStore()
 const gameData = useGameDataStore()
+const { isStaleTag } = useTagFreshness()
+
+function scriptFreshness(script: SavedScript): 'all-fresh' | 'has-stale' {
+  for (const tag of script.tags) {
+    if (tag.category !== 'Genre' && tag.category !== 'Setting') {
+      if (isStaleTag(tag.id)) return 'has-stale'
+    }
+  }
+  return 'all-fresh'
+}
 
 const emit = defineEmits<{
   openTab: [tab: 'generator' | 'synergy' | 'advertisers' | 'plan', options?: { pushState?: boolean }]
@@ -402,7 +413,7 @@ function onRemoveFromBacklogClick(script: SavedScript) {
               v-for="script in group.scripts"
               :key="script.uniqueId"
               class="board__card"
-              :class="{ 'card-just-pinned': calculator.lastPinnedScriptId === script.uniqueId }"
+              :class="['board__card--' + scriptFreshness(script), { 'card-just-pinned': calculator.lastPinnedScriptId === script.uniqueId }]"
             >
           <!-- Compact row: name, date, source, stats, tags preview, advertiser summary -->
           <div
@@ -514,12 +525,11 @@ function onRemoveFromBacklogClick(script: SavedScript) {
               </div>
               <div class="board__meta-block board__meta-block--pb2">
                 <span class="board__meta-label">{{ $t('board.plot') }}</span>
-                <template v-for="tag in splitTagsByStartAndPlot(script.tags).plot.slice(0, 6)" :key="tag.id">
+                <template v-for="tag in splitTagsByStartAndPlot(script.tags).plot" :key="tag.id">
                   <span class="board__tag-chip" :class="getTagCategoryClasses(tag.category, tag.id)">
-                    {{ gameData.tags[tag.id]?.name ?? tag.id }}
+                    {{ gameData.tags[tag.id]?.name ?? tag.id }}<span class="tag-freshness-icon">{{ isStaleTag(tag.id) ? '💩' : '🍃' }}</span>
                   </span>
                 </template>
-                <span v-if="splitTagsByStartAndPlot(script.tags).plot.length > 6" class="board__tag-more">+{{ splitTagsByStartAndPlot(script.tags).plot.length - 6 }}</span>
               </div>
             </template>
             <div v-if="getAdvertiserSummary(script.tags)" class="info-row-bottom">
@@ -554,7 +564,7 @@ function onRemoveFromBacklogClick(script: SavedScript) {
                       class="board__tag-chip"
                       :class="getTagCategoryClasses(tag.category, tag.id)"
                     >
-                      {{ gameData.tags[tag.id]?.name ?? tag.id }}
+                      {{ gameData.tags[tag.id]?.name ?? tag.id }}<span class="tag-freshness-icon">{{ isStaleTag(tag.id) ? '💩' : '🍃' }}</span>
                     </span>
                   </div>
                 </div>

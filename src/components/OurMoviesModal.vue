@@ -4,10 +4,19 @@ import type { GameMovie, SavedScript, TagInput } from '@/types/game'
 import { useCalculatorStore } from '@/stores/calculator'
 import { useGameDataStore } from '@/stores/gameData'
 import { getTagCategoryClasses } from '@/utils/tagCategoryColors'
+import { useTagFreshness } from '@/utils/tagFreshness'
 import { useI18n } from 'vue-i18n'
 import Modal from '@/components/ui/Modal.vue'
 
 const { t } = useI18n()
+const { isStaleTag } = useTagFreshness()
+
+function movieFreshness(movie: GameMovie): 'all-fresh' | 'has-stale' {
+  for (const cid of movie.contentIds ?? []) {
+    if (isStaleTag(cid)) return 'has-stale'
+  }
+  return 'all-fresh'
+}
 
 function stageName(stage: number): string {
   const names: Record<number, string> = {
@@ -255,6 +264,7 @@ function importAllMovies() {
                   v-for="movie in group.movies"
                   :key="movie.id"
                   class="our-movies__card"
+                  :class="'our-movies__card--' + movieFreshness(movie)"
                 >
                   <div class="our-movies__movie-row">
                     <div class="min-w-0-flex-1">
@@ -286,14 +296,14 @@ function importAllMovies() {
                       </div>
                       <div v-if="movie.contentIds?.length" class="our-movies__chips">
                         <span
-                          v-for="cid in movie.contentIds.slice(0, 6)"
+                          v-for="cid in movie.contentIds"
                           :key="cid"
                           class="chip-sm-inline"
                           :class="getTagCategoryClasses(tagCategory(cid))"
                         >
                           {{ tagName(cid) }}
+                          <span class="tag-freshness-icon">{{ isStaleTag(cid) ? '💩' : '🍃' }}</span>
                         </span>
-                        <span v-if="movie.contentIds.length > 6" class="our-movies__more-label">+{{ movie.contentIds.length - 6 }}</span>
                       </div>
                       <div v-if="movie.franchiseId >= 0 || movie.prequelId >= 0 || movie.sequelId >= 0" class="our-movies__meta">
                         <span v-if="movie.franchiseId >= 0">{{ $t('ourMovies.franchise', { id: movie.franchiseId }) }}</span>
@@ -382,6 +392,7 @@ function importAllMovies() {
               v-for="movie in filteredMovies"
               :key="movie.id"
               class="our-movies__card"
+              :class="'our-movies__card--' + movieFreshness(movie)"
             >
               <div class="our-movies__movie-row">
                 <div class="min-w-0-flex-1">
@@ -413,14 +424,14 @@ function importAllMovies() {
                   </div>
                   <div v-if="movie.contentIds?.length" class="our-movies__chips">
                     <span
-                      v-for="cid in movie.contentIds.slice(0, 6)"
+                      v-for="cid in movie.contentIds"
                       :key="cid"
                       class="chip-sm-inline"
                       :class="getTagCategoryClasses(tagCategory(cid))"
                     >
                       {{ tagName(cid) }}
+                      <span class="tag-freshness-icon">{{ isStaleTag(cid) ? '💩' : '🍃' }}</span>
                     </span>
-                    <span v-if="movie.contentIds.length > 6" class="our-movies__more-label">+{{ movie.contentIds.length - 6 }}</span>
                   </div>
                   <div v-if="movie.franchiseId >= 0 || movie.prequelId >= 0 || movie.sequelId >= 0" class="our-movies__meta">
                     <span v-if="movie.franchiseId >= 0">{{ $t('ourMovies.franchise', { id: movie.franchiseId }) }}</span>
