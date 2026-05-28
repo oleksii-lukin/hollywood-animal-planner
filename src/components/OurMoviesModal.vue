@@ -11,13 +11,19 @@ const { t } = useI18n()
 
 function stageName(stage: number): string {
   const names: Record<number, string> = {
+    0: t('ourMovies.stage0'),
     1: t('generator.stagePreProduction'),
     2: t('generator.stageProduction'),
     3: t('generator.stagePostProduction'),
     4: t('generator.stagePlannedRelease'),
-    5: t('generator.stageReleased'),
   }
   return names[stage] ?? t('ourMovies.stage0')
+}
+
+function movieStageLabel(movie: GameMovie): string {
+  if (movie.actuallyReleased && movie.currentStage === 4) return t('ourMovies.inTheatres')
+  if (movie.currentStage === 5) return t('ourMovies.archived')
+  return stageName(movie.currentStage ?? 0)
 }
 
 const props = defineProps<{
@@ -33,6 +39,7 @@ const calculator = useCalculatorStore()
 const gameData = useGameDataStore()
 
 const linkingMovieId = ref<number | null>(null)
+const importingAll = ref(false)
 const activeTab = ref<'default' | 'imported' | 'unprocessed' | 'stage'>('default')
 
 /** Scripts available for linking: not linked to any other movie (or linked to the current one when changing). */
@@ -76,21 +83,31 @@ function toggleStage(key: string) {
 }
 
 const moviesByStage = computed(() => {
-  const groups: { type: 'released' | 'stage'; key: string; stage?: number; movies: GameMovie[] }[] = []
-  const released = sortedMovies.value.filter(m => !!m.actuallyReleased)
-  if (released.length) {
-    groups.push({ type: 'released', key: '_released', movies: released })
-  }
+  type MovieGroup = { type: 'archived' | 'inTheatres' | 'stage'; key: string; stage?: number; movies: GameMovie[] }
   const stageMap = new Map<number, GameMovie[]>()
   for (const m of sortedMovies.value) {
-    if (!!m.actuallyReleased) continue
+    if (m.currentStage === 5) continue
+    if (m.currentStage === 4 && !!m.actuallyReleased) continue
     const s = m.currentStage ?? 0
     if (!stageMap.has(s)) stageMap.set(s, [])
     stageMap.get(s)!.push(m)
   }
+
+  const groups: MovieGroup[] = []
   for (const [stage, movs] of [...stageMap.entries()].sort((a, b) => a[0] - b[0])) {
     groups.push({ type: 'stage', key: String(stage), stage, movies: movs })
   }
+
+  const inTheatres = sortedMovies.value.filter(m => m.currentStage === 4 && !!m.actuallyReleased)
+  if (inTheatres.length) {
+    groups.push({ type: 'inTheatres', key: '_inTheatres', movies: inTheatres })
+  }
+
+  const archived = sortedMovies.value.filter(m => m.currentStage === 5)
+  if (archived.length) {
+    groups.push({ type: 'archived', key: '_archived', movies: archived })
+  }
+
   return groups
 })
 
@@ -149,6 +166,15 @@ function createFromSaveAndLink(movie: GameMovie) {
   calculator.createScriptFromMovieAndLink(movie, tags)
   linkingMovieId.value = null
 }
+
+function importAllMovies() {
+  if (importingAll.value) return
+  importingAll.value = true
+  for (const movie of unprocessedMovies.value) {
+    createFromSaveAndLink(movie)
+  }
+  importingAll.value = false
+}
 </script>
 
 <template>
@@ -163,6 +189,17 @@ function createFromSaveAndLink(movie: GameMovie) {
       </template>
 
       <template v-else>
+        <div class="flex justify-end mb-2">
+          <button
+            v-if="unprocessedMovies.length > 0"
+            type="button"
+            class="btn-accent-outline-xs"
+            :disabled="importingAll"
+            @click="importAllMovies"
+          >
+            {{ $t('ourMovies.importAll', { count: unprocessedMovies.length }) }}
+          </button>
+        </div>
         <div class="save-modal__tabs">
           <button
             @click="activeTab = 'default'"
@@ -207,7 +244,8 @@ function createFromSaveAndLink(movie: GameMovie) {
                   :class="collapsedStages.has(group.key) ? '-rotate-90' : 'rotate-0'"
                 >▼</span>
                 <span class="text-xs font-semibold uppercase text-accent">
-                  <template v-if="group.type === 'released'">{{ $t('ourMovies.tabStageReleased') }}</template>
+                  <template v-if="group.type === 'archived'">{{ $t('ourMovies.archived') }}</template>
+                  <template v-else-if="group.type === 'inTheatres'">{{ $t('ourMovies.inTheatres') }}</template>
                   <template v-else>{{ stageName(group.stage!) }}</template>
                 </span>
                 <span class="text-muted-xs">({{ group.movies.length }})</span>
@@ -224,7 +262,7 @@ function createFromSaveAndLink(movie: GameMovie) {
                       <div class="text-muted-sm-mt1">
                         {{ $t('ourMovies.release', { date: formatDate(movie.realReleaseDate ?? movie.scheduledRelease) }) }}
                         <span v-if="calculator.isOurMovieReleased(movie)" class="our-movies__released">{{ $t('ourMovies.released') }}</span>
-                        <span v-else class="ml-2">{{ stageName(movie.currentStage) }}</span>
+                        <span v-else class="ml-2">{{ movieStageLabel(movie) }}</span>
                       </div>
                       <div v-if="movie.genreIdsAndFractions?.length" class="our-movies__chips">
                         <span
@@ -351,7 +389,7 @@ function createFromSaveAndLink(movie: GameMovie) {
                   <div class="text-muted-sm-mt1">
                     {{ $t('ourMovies.release', { date: formatDate(movie.realReleaseDate ?? movie.scheduledRelease) }) }}
                     <span v-if="calculator.isOurMovieReleased(movie)" class="our-movies__released">{{ $t('ourMovies.released') }}</span>
-                    <span v-else class="ml-2">{{ stageName(movie.currentStage) }}</span>
+                    <span v-else class="ml-2">{{ movieStageLabel(movie) }}</span>
                   </div>
                   <div v-if="movie.genreIdsAndFractions?.length" class="our-movies__chips">
                     <span

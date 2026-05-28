@@ -84,6 +84,7 @@
   "board.openInSynergy": "Open in Synergy →",
   "board.openInAdvertisers": "Open in Advertisers →",
   "board.exportJson": "Export JSON",
+  "board.otherScripts": "Other Scripts",
   "board.removeTooltip": "Remove from backlog (3 clicks to confirm)",
   "board.removeTooltipClickAgain": "Click again",
   "board.removeTooltipFinal": "Click once more to remove permanently",
@@ -205,6 +206,9 @@
   "ourMovies.tabStage": "By Stage",
   "ourMovies.tabStageReleased": "Released",
   "ourMovies.tabStageLabel": "Stage {n}",
+  "ourMovies.importAll": "Import All ({count})",
+  "ourMovies.archived": "Archived",
+  "ourMovies.inTheatres": "In Theatres",
   "ourMovies.stage0": "Concept",
 
   "generator.title": "Generator Settings",
@@ -279,6 +283,6 @@
   "generator.stageProduction": "Production",
   "generator.stagePostProduction": "Post Production",
   "generator.stagePlannedRelease": "Planned Release",
-  "generator.stageReleased": "Released",
+  "generator.stageReleased": "Archived",
   "generator.noStaleTags": "No stale tags found for the current filters."
 }

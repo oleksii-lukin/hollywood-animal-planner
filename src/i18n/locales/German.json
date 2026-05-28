@@ -84,6 +84,7 @@
   "board.openInSynergy": "In Synergy öffnen →",
   "board.openInAdvertisers": "In Advertisers öffnen →",
   "board.exportJson": "JSON exportieren",
+  "board.otherScripts": "Andere Skripte",
   "board.removeTooltip": "Aus Rückstand entfernen (3 Klicks zum Bestätigen)",
   "board.removeTooltipClickAgain": "Erneut klicken",
   "board.removeTooltipFinal": "Noch einmal klicken, um endgültig zu entfernen",
@@ -205,6 +206,9 @@
   "ourMovies.tabStage": "Nach Stufe",
   "ourMovies.tabStageReleased": "Veröffentlicht",
   "ourMovies.tabStageLabel": "Stufe {n}",
+  "ourMovies.importAll": "Alle importieren ({count})",
+  "ourMovies.archived": "Archiviert",
+  "ourMovies.inTheatres": "Im Kino",
   "ourMovies.stage0": "Konzept",
 
   "generator.title": "Generator-Einstellungen",
@@ -279,6 +283,6 @@
   "generator.stageProduction": "Produktion",
   "generator.stagePostProduction": "Postproduktion",
   "generator.stagePlannedRelease": "Geplante Veröffentlichung",
-  "generator.stageReleased": "Veröffentlicht",
+  "generator.stageReleased": "Archiviert",
   "generator.noStaleTags": "Keine veralteten Tags für die aktuellen Filter gefunden."
 }

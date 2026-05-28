@@ -84,6 +84,7 @@
   "board.openInSynergy": "Synergyで開く →",
   "board.openInAdvertisers": "Advertisersで開く →",
   "board.exportJson": "JSONをエクスポート",
+  "board.otherScripts": "その他のスクリプト",
   "board.removeTooltip": "バックログから削除（確認に3クリック）",
   "board.removeTooltipClickAgain": "もう一度クリック",
   "board.removeTooltipFinal": "あと1回クリックで完全に削除",
@@ -205,6 +206,9 @@
   "ourMovies.tabStage": "ステージ別",
   "ourMovies.tabStageReleased": "公開済み",
   "ourMovies.tabStageLabel": "ステージ{n}",
+  "ourMovies.importAll": "すべてインポート ({count})",
+  "ourMovies.archived": "アーカイブ",
+  "ourMovies.inTheatres": "上映中",
   "ourMovies.stage0": "構想",
 
   "generator.title": "生成設定",
@@ -279,6 +283,6 @@
   "generator.stageProduction": "制作",
   "generator.stagePostProduction": "ポストプロダクション",
   "generator.stagePlannedRelease": "公開予定",
-  "generator.stageReleased": "公開済み",
+  "generator.stageReleased": "アーカイブ",
   "generator.noStaleTags": "現在のフィルターに該当する古いタグはありません。"
 }

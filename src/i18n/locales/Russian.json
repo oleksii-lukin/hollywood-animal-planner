@@ -84,6 +84,7 @@
   "board.openInSynergy": "Открыть в Synergy →",
   "board.openInAdvertisers": "Открыть в Advertisers →",
   "board.exportJson": "Экспорт JSON",
+  "board.otherScripts": "Другие сценарии",
   "board.removeTooltip": "Удалить из бэклога (3 клика для подтверждения)",
   "board.removeTooltipClickAgain": "Нажмите ещё раз",
   "board.removeTooltipFinal": "Нажмите ещё раз для окончательного удаления",
@@ -205,6 +206,9 @@
   "ourMovies.tabStage": "По этапам",
   "ourMovies.tabStageReleased": "Выпущенные",
   "ourMovies.tabStageLabel": "Этап {n}",
+  "ourMovies.importAll": "Импортировать все ({count})",
+  "ourMovies.archived": "Архивировано",
+  "ourMovies.inTheatres": "В прокате",
   "ourMovies.stage0": "Концепция",
 
   "generator.title": "Настройки генератора",
@@ -279,6 +283,6 @@
   "generator.stageProduction": "Производство",
   "generator.stagePostProduction": "Пост-продакшн",
   "generator.stagePlannedRelease": "Запланированный релиз",
-  "generator.stageReleased": "Выпущен",
+  "generator.stageReleased": "Архивировано",
   "generator.noStaleTags": "Устаревшие теги не найдены для текущих фильтров."
 }

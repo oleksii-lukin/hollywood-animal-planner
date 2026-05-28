@@ -84,6 +84,7 @@
   "board.openInSynergy": "Адкрыць у Synergy →",
   "board.openInAdvertisers": "Адкрыць у Advertisers →",
   "board.exportJson": "Экспарт JSON",
+  "board.otherScripts": "Іншыя сцэнарыі",
   "board.removeTooltip": "Выдаліць з бэклога (3 клікі для пацверджання)",
   "board.removeTooltipClickAgain": "Націсніце яшчэ раз",
   "board.removeTooltipFinal": "Націсніце яшчэ раз для канчатковага выдалення",
@@ -205,6 +206,9 @@
   "ourMovies.tabStage": "Па этапах",
   "ourMovies.tabStageReleased": "Выпушчаныя",
   "ourMovies.tabStageLabel": "Этап {n}",
+  "ourMovies.importAll": "Імпартаваць усе ({count})",
+  "ourMovies.archived": "Архівавана",
+  "ourMovies.inTheatres": "У пракаце",
   "ourMovies.stage0": "Канцэпцыя",
 
   "generator.title": "Налады генератара",
@@ -279,6 +283,6 @@
   "generator.stageProduction": "Вытворчасць",
   "generator.stagePostProduction": "Пост-прадакшн",
   "generator.stagePlannedRelease": "Запланаваны рэліз",
-  "generator.stageReleased": "Выпушчаны",
+  "generator.stageReleased": "Архівавана",
   "generator.noStaleTags": "Састарэлых тэгаў не знойдзена для бягучых фільтраў."
 }

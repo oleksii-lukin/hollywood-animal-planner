@@ -52,6 +52,26 @@ const editingNameId = ref<string | null>(null)
 const editingNameValue = ref('')
 const editingNameInputRef = ref<HTMLInputElement | null>(null)
 const showOurMoviesModal = ref(false)
+const collapsedStages = ref<Set<string>>(new Set())
+
+function toggleStage(key: string) {
+  if (collapsedStages.value.has(key)) {
+    collapsedStages.value.delete(key)
+  } else {
+    collapsedStages.value.add(key)
+  }
+}
+
+function stageName(stage: number): string {
+  const names: Record<number, string> = {
+    0: t('ourMovies.stage0'),
+    1: t('generator.stagePreProduction'),
+    2: t('generator.stageProduction'),
+    3: t('generator.stagePostProduction'),
+    4: t('generator.stagePlannedRelease'),
+  }
+  return names[stage] ?? t('ourMovies.stage0')
+}
 
 const hasOurMovies = computed(() => (calculator.saveFileData?.ourMovies?.length ?? 0) > 0)
 
@@ -113,6 +133,51 @@ const filteredAndSortedScripts = computed(() => {
   })
 
   return list
+})
+
+const scriptsByStage = computed(() => {
+  type ScriptGroup = { key: string; stage: number | null; scripts: SavedScript[] }
+  const stageMap = new Map<number, SavedScript[]>()
+  const inTheatres: SavedScript[] = []
+  const other: SavedScript[] = []
+  const movies = calculator.saveFileData?.ourMovies ?? []
+
+  for (const script of filteredAndSortedScripts.value) {
+    const movieId = calculator.getGameMovieIdForPinnedScript(script.uniqueId)
+    if (movieId !== null) {
+      const movie = movies.find(m => m.id === movieId)
+      if (movie) {
+        if (movie.currentStage === 4 && !!movie.actuallyReleased) {
+          inTheatres.push(script)
+          continue
+        }
+        const stage = movie.currentStage ?? 0
+        if (!stageMap.has(stage)) stageMap.set(stage, [])
+        stageMap.get(stage)!.push(script)
+        continue
+      }
+    }
+    other.push(script)
+  }
+
+  const groups: ScriptGroup[] = []
+  const stageOrder = [0, 1, 2, 3, 4]
+  for (const s of stageOrder) {
+    if (stageMap.has(s) && stageMap.get(s)!.length > 0) {
+      groups.push({ key: `stage-${s}`, stage: s, scripts: stageMap.get(s)! })
+    }
+  }
+  if (inTheatres.length > 0) {
+    groups.push({ key: 'inTheatres', stage: null, scripts: inTheatres })
+  }
+  if (stageMap.has(5) && stageMap.get(5)!.length > 0) {
+    groups.push({ key: 'archived', stage: 5, scripts: stageMap.get(5)! })
+  }
+  if (other.length > 0) {
+    groups.push({ key: 'other', stage: null, scripts: other })
+  }
+
+  return groups
 })
 
 function formatPinnedDate(iso: string): string {
@@ -317,16 +382,28 @@ function onRemoveFromBacklogClick(script: SavedScript) {
       </div>
 
       <div v-else class="space-y-3">
-          <div class="label-section-muted">
-            {{ t('board.scriptCount', filteredAndSortedScripts.length) }}
+        <div class="label-section-muted">
+          {{ t('board.scriptCount', filteredAndSortedScripts.length) }}
+        </div>
+      <div class="board__grid">
+        <template v-for="group in scriptsByStage" :key="group.key">
+          <div class="board__stage-header" @click="toggleStage(group.key)">
+            <span class="board__stage-arrow" :class="collapsedStages.has(group.key) ? '-rotate-90' : 'rotate-0'">▶</span>
+            <span class="board__stage-label">
+              <template v-if="group.key === 'archived'">{{ $t('ourMovies.archived') }}</template>
+              <template v-else-if="group.key === 'inTheatres'">{{ $t('ourMovies.inTheatres') }}</template>
+              <template v-else-if="group.stage !== null">{{ stageName(group.stage) }}</template>
+              <template v-else>{{ $t('board.otherScripts') }}</template>
+            </span>
+            <span class="board__stage-count">({{ group.scripts.length }})</span>
           </div>
-      <transition-group name="board-list" tag="div" class="board__grid">
-        <div
-          v-for="script in filteredAndSortedScripts"
-          :key="script.uniqueId"
-          class="board__card"
-          :class="{ 'card-just-pinned': calculator.lastPinnedScriptId === script.uniqueId }"
-        >
+          <template v-if="!collapsedStages.has(group.key)">
+            <div
+              v-for="script in group.scripts"
+              :key="script.uniqueId"
+              class="board__card"
+              :class="{ 'card-just-pinned': calculator.lastPinnedScriptId === script.uniqueId }"
+            >
           <!-- Compact row: name, date, source, stats, tags preview, advertiser summary -->
           <div
             class="script-row"
@@ -545,8 +622,10 @@ function onRemoveFromBacklogClick(script: SavedScript) {
               </button>
             </div>
           </div>
-        </div>
-      </transition-group>
+            </div>
+          </template>
+        </template>
+      </div>
       </div>
       <AdvertiserAnalysisModal
         :open="!!analysisModalScript"
@@ -563,6 +642,33 @@ function onRemoveFromBacklogClick(script: SavedScript) {
 </template>
 
 <style scoped>
+.board__stage-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border);
+  margin-top: 8px;
+}
+.board__stage-header:hover {
+  opacity: 0.8;
+}
+.board__stage-arrow {
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+.board__stage-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-accent, #b8860b);
+}
+.board__stage-count {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
 .board-list-leave-active {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }

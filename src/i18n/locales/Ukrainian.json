@@ -84,6 +84,7 @@
   "board.openInSynergy": "Відкрити в Synergy →",
   "board.openInAdvertisers": "Відкрити в Advertisers →",
   "board.exportJson": "Експортувати JSON",
+  "board.otherScripts": "Інші сценарії",
   "board.removeTooltip": "Видалити з черги (3 кліки для підтвердження)",
   "board.removeTooltipClickAgain": "Натисніть ще раз",
   "board.removeTooltipFinal": "Натисніть ще раз, щоб видалити назавжди",
@@ -205,6 +206,9 @@
   "ourMovies.tabStage": "За етапами",
   "ourMovies.tabStageReleased": "Випущені",
   "ourMovies.tabStageLabel": "Етап {n}",
+  "ourMovies.importAll": "Імпортувати всі ({count})",
+  "ourMovies.archived": "Архівовано",
+  "ourMovies.inTheatres": "У прокаті",
   "ourMovies.stage0": "Концепція",
 
   "generator.title": "Налаштування генератора",
@@ -279,6 +283,6 @@
   "generator.stageProduction": "Виробництво",
   "generator.stagePostProduction": "Пост-продакшн",
   "generator.stagePlannedRelease": "Запланований реліз",
-  "generator.stageReleased": "Випущено",
+  "generator.stageReleased": "Архівовано",
   "generator.noStaleTags": "Застарілих тегів не знайдено для поточних фільтрів."
 }

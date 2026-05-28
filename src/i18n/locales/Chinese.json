@@ -84,6 +84,7 @@
   "board.openInSynergy": "在Synergy中打开 →",
   "board.openInAdvertisers": "在Advertisers中打开 →",
   "board.exportJson": "导出JSON",
+  "board.otherScripts": "其他剧本",
   "board.removeTooltip": "从待办移除（需3次点击确认）",
   "board.removeTooltipClickAgain": "再次点击",
   "board.removeTooltipFinal": "再点击一次以永久移除",
@@ -205,6 +206,9 @@
   "ourMovies.tabStage": "按阶段",
   "ourMovies.tabStageReleased": "已发布",
   "ourMovies.tabStageLabel": "阶段{n}",
+  "ourMovies.importAll": "全部导入 ({count})",
+  "ourMovies.archived": "已归档",
+  "ourMovies.inTheatres": "上映中",
   "ourMovies.stage0": "概念",
 
   "generator.title": "生成器设置",
@@ -279,6 +283,6 @@
   "generator.stageProduction": "制作",
   "generator.stagePostProduction": "后期制作",
   "generator.stagePlannedRelease": "计划发布",
-  "generator.stageReleased": "已发布",
+  "generator.stageReleased": "已归档",
   "generator.noStaleTags": "未找到当前过滤器的过时标签。"
 }
